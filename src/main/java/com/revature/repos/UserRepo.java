@@ -9,4 +9,13 @@ public class UserRepo {
 
     public Optional<User> findUserByCredentials(String username, String password) {
     }
+
+
+    public void save(User newUser) {
+
+    }
+
+    public Optional<User> findUserByUsername(String username) {
+
+    }
 }
