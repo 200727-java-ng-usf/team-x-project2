@@ -1,6 +1,5 @@
 package com.revature.models;
 
-import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -30,7 +29,7 @@ public class User {
     private String email;
 
     @Column(name="zip_code")
-    private int zipCode;
+    private String zipCode;
 
     @Enumerated(EnumType.ORDINAL)
     @Column(name="role_id")
@@ -55,12 +54,12 @@ public class User {
         this.userRole = UserRole.USER;
     }
 
-    public User(String username, String password, String firstName, String lastName, String email, int zipCode) {
+    public User(String username, String password, String firstName, String lastName, String email, String zipCode) {
         this(username, password, firstName, lastName, email);
         this.zipCode = zipCode;
     }
 
-    public User(int userId, String username, String password, String firstName, String lastName, String email, int zipCode, UserRole userRole) {
+    public User(int userId, String username, String password, String firstName, String lastName, String email, String zipCode, UserRole userRole) {
         this(username, password, firstName, lastName, email, zipCode);
         this.userId = userId;
         this.userRole = userRole;
@@ -118,11 +117,11 @@ public class User {
         this.email = email;
     }
 
-    public int getZipCode() {
+    public String getZipCode() {
         return zipCode;
     }
 
-    public void setZipCode(int zipCode) {
+    public void setZipCode(String zipCode) {
         this.zipCode = zipCode;
     }
 
