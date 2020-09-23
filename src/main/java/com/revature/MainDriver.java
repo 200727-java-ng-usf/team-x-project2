@@ -13,7 +13,7 @@ import java.util.List;
 public class MainDriver {
     private static SessionFactory factory = HibernateUtil.getSessionFactory();
     public static void main(String[] args) {
-//        //testing out adding a new User
+        //testing out adding a new User
 //        try (Session session = factory.getCurrentSession()){
 //
 //

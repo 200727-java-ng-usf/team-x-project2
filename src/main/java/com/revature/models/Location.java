@@ -1,7 +1,9 @@
 package com.revature.models;
 
+import javax.jws.soap.SOAPBinding;
 import javax.persistence.*;
 import java.util.Objects;
+import java.util.Set;
 
 @javax.persistence.Entity(name="locations")
 @Table(name="locations")
@@ -47,6 +49,7 @@ public class Location {
     public Location(Location copy){
         this(copy.locationId, copy.city, copy.state, copy.country, copy.locationZipCode);
     }
+
 
     public int getLocationId() {
         return locationId;

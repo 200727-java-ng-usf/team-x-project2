@@ -3,6 +3,7 @@ package com.revature.models;
 
 import javax.persistence.*;
 import java.util.Objects;
+import java.util.Set;
 
 @javax.persistence.Entity(name= "users")
 @Table(name="users")
@@ -34,6 +35,7 @@ public class User {
     @Enumerated(EnumType.ORDINAL)
     @Column(name="role_id")
     private UserRole userRole;
+
 
     public User() {
     }
@@ -68,6 +70,8 @@ public class User {
     public User(User copy){
         this(copy.userId, copy.username, copy.password, copy.firstName, copy.lastName, copy.email, copy.zipCode, copy.userRole);
     }
+
+
 
     public int getUserId() {
         return userId;
