@@ -73,3 +73,4 @@ commit;
 
 insert into user_roles (role_name) values ('User');
 insert into user_roles (role_name) values ('Admin');
+insert into user_roles (role_name) values ('Locked');
