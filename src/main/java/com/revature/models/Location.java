@@ -1,7 +1,9 @@
 package com.revature.models;
 
+import javax.jws.soap.SOAPBinding;
 import javax.persistence.*;
 import java.util.Objects;
+import java.util.Set;
 
 @javax.persistence.Entity(name="locations")
 @Table(name="locations")
@@ -24,6 +26,11 @@ public class Location {
     @Column(name="location_zip_code")
     private String locationZipCode;
 
+    @ManyToMany(mappedBy = "locations")
+    private Set<User> users;
+
+    @OneToMany(mappedBy = "home")
+    private Set<User> homeUsers;
 
     public Location() {
     }
@@ -46,6 +53,22 @@ public class Location {
 
     public Location(Location copy){
         this(copy.locationId, copy.city, copy.state, copy.country, copy.locationZipCode);
+    }
+
+    public Set<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
+    }
+
+    public Set<User> getHomeUsers() {
+        return homeUsers;
+    }
+
+    public void setHomeUsers(Set<User> homeUsers) {
+        this.homeUsers = homeUsers;
     }
 
     public int getLocationId() {

@@ -3,6 +3,7 @@ package com.revature.models;
 
 import javax.persistence.*;
 import java.util.Objects;
+import java.util.Set;
 
 @javax.persistence.Entity(name= "users")
 @Table(name="users")
@@ -34,6 +35,22 @@ public class User {
     @Enumerated(EnumType.ORDINAL)
     @Column(name="role_id")
     private UserRole userRole;
+
+    @ManyToMany(cascade = { CascadeType.REMOVE})
+    @JoinTable(
+            name = "user_locations",
+            joinColumns = { @JoinColumn(name="user_id")},
+            inverseJoinColumns = { @JoinColumn(name = "location_id")}
+    )
+    private Set<Location> locations;
+
+    @ManyToOne(cascade = { CascadeType.REMOVE})
+    @JoinTable(
+            name = "home_locations",
+            joinColumns = { @JoinColumn(name="user_id")},
+            inverseJoinColumns = { @JoinColumn(name = "location_id")}
+    )
+    private Location home;
 
     public User() {
     }
@@ -67,6 +84,22 @@ public class User {
 
     public User(User copy){
         this(copy.userId, copy.username, copy.password, copy.firstName, copy.lastName, copy.email, copy.zipCode, copy.userRole);
+    }
+
+    public Set<Location> getLocations() {
+        return locations;
+    }
+
+    public void setLocations(Set<Location> locations) {
+        this.locations = locations;
+    }
+
+    public Location getHome() {
+        return home;
+    }
+
+    public void setHome(Location home) {
+        this.home = home;
     }
 
     public int getUserId() {
@@ -162,8 +195,10 @@ public class User {
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
-                ", zipCode=" + zipCode +
+                ", zipCode='" + zipCode + '\'' +
                 ", userRole=" + userRole +
+                ", locations=" + locations +
+                ", home=" + home +
                 '}';
     }
 }
