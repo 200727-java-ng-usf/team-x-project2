@@ -105,8 +105,15 @@ public class MainDriver {
 //            e.printStackTrace();
 //        }
 
-        // tested findUserByCredentials in userRepo
+        // tested findUserByCredentials, register, findUserByUserName, getAllUsers in userRepo
 //        UserRepo userRepo = new UserRepo();
-//        System.out.println(userRepo.findUserByCredentials("TestUser", "Test").get());
+////        System.out.println(userRepo.findUserByCredentials("TestUser", "Test").get());
+//        User newUser = new User("TestUser4", "Test", "TestFirst", "TestLast", "Test4@test.com", "00000");
+////       userRepo.register(newUser);
+//        System.out.println(userRepo.findUserByUsername(newUser.getUsername()));
+//        Set<User> users = userRepo.getAllUsers();
+//        for (User user: users) {
+//            System.out.println(user);
+//        }
     }
 }
