@@ -8,5 +8,6 @@ public class UserRepo {
 
 
     public Optional<User> findUserByCredentials(String username, String password) {
+        return null;
     }
 }

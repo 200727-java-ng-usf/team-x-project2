@@ -3,12 +3,12 @@ package com.revature;
 import com.revature.models.Location;
 import com.revature.models.User;
 import com.revature.util.HibernateUtil;
-import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
-import javax.persistence.Query;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class MainDriver {
 
@@ -19,7 +19,7 @@ public class MainDriver {
 
     private static SessionFactory factory = HibernateUtil.getSessionFactory();
     public static void main(String[] args) {
-        //testing out adding a new User
+//        //testing out adding a new User
 //        try (Session session = factory.getCurrentSession()){
 //
 //
@@ -75,6 +75,29 @@ public class MainDriver {
 //            for (Location location: allLocations) {
 //                System.out.println(location);
 //            }
+//            session.getTransaction().commit();
+//
+//        } catch (Exception e){
+//            e.printStackTrace();
+//        }
+//      //tested home/user locations
+//        try (Session session = factory.getCurrentSession()){
+//
+//
+//            session.beginTransaction();
+//
+//
+//            Location location = session.createQuery("from locations l where l.locationZipCode = : zc",Location.class)
+//                    .setParameter("zc", "08869")
+//                    .getSingleResult();
+//            System.out.println(location);
+//            User user = session.createQuery("from users u where u.username = :un", User.class)
+//                    .setParameter("un", "TestUser")
+//                    .getSingleResult();
+//            user.setHome(location);
+//            System.out.println(user);
+//            session.update(user);
+//
 //            session.getTransaction().commit();
 //
 //        } catch (Exception e){
