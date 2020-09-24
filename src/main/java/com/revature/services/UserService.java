@@ -7,6 +7,7 @@ import com.revature.models.UserRole;
 import com.revature.repos.UserRepo;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @Service
@@ -20,7 +21,7 @@ public class UserService {
     //update password
     //update home only
 
-    private UserRepo userRepo = new UserRepo();
+    private UserRepo userRepo;
 
     //no args constructor
     public UserService() {
@@ -53,6 +54,11 @@ public class UserService {
         newUser.setUserRole(UserRole.USER);
         userRepo.save(newUser);
 
+    }
+
+    //update user
+    public void update (User updatedUser) throws IOException {
+        userRepo.updateUser(updatedUser);
     }
 
 
