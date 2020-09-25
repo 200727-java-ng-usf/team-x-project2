@@ -4,7 +4,9 @@ import com.revature.exceptions.AuthenticationException;
 import com.revature.exceptions.FailedTransactionException;
 import com.revature.exceptions.ResourceNotFoundException;
 import com.revature.models.User;
+
 import com.revature.util.HibernateUtil;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
@@ -14,6 +16,7 @@ import java.util.Optional;
 import java.util.Set;
 
 public class UserRepo {
+
 private SessionFactory factory = HibernateUtil.getSessionFactory();
 private Session session = factory.getCurrentSession();
 
@@ -73,6 +76,12 @@ private Session session = factory.getCurrentSession();
         session.update(updatedUser);
         session.getTransaction().commit();
     }
+
+
+
+
+
+
 
     public void deleteUser(User deleteUser){
         getSession().beginTransaction();

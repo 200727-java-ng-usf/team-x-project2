@@ -129,5 +129,8 @@ public class MainDriver {
 //        System.out.println(deleteUser);
 //        userRepo.deleteUser(deleteUser);
 //        System.out.println(userRepo.findUserByUsername(deleteUser.getUsername()).get());
+
+        //testing find all
+
     }
 }
