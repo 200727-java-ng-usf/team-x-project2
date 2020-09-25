@@ -106,7 +106,7 @@ public class MainDriver {
 //        }
 
         // tested findUserByCredentials, register, findUserByUserName, getAllUsers in userRepo
-//        UserRepo userRepo = new UserRepo();
+       UserRepo userRepo = new UserRepo();
 ////        System.out.println(userRepo.findUserByCredentials("TestUser", "Test").get());
 //        User newUser = new User("TestUser4", "Test", "TestFirst", "TestLast", "Test4@test.com", "00000");
 //      userRepo.register(newUser);
