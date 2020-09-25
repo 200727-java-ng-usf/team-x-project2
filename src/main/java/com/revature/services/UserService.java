@@ -5,9 +5,12 @@ import com.revature.exceptions.InvalidRequestException;
 import com.revature.models.User;
 import com.revature.models.UserRole;
 import com.revature.repos.UserRepo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,11 +27,17 @@ public class UserService {
     private UserRepo userRepo;
 
     //no args constructor
-    public UserService() {
+    @Autowired
+    public UserService(UserRepo repo) {
         System.out.println("UserService no-args constructor invoked!");
+        userRepo = repo;
+
     }
 
+
+
     //validate username and password
+    @Transactional
     public User authenticate(String username, String password) {
         if (username == null || username.trim().equals("") || password == null || password.trim().equals("")) {
             throw new InvalidRequestException("Invalid credential values provided!");
@@ -40,6 +49,7 @@ public class UserService {
     }
 
     //register a new user
+    @Transactional
     public void register(User newUser) {
 
         if (!isUserValid(newUser)) {
