@@ -36,7 +36,7 @@ public class User {
     @Column(name="role_id")
     private UserRole userRole;
 
-    @ManyToMany(cascade = { CascadeType.REMOVE})
+    @ManyToMany(cascade = { CascadeType.REMOVE}, fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_locations",
             joinColumns = { @JoinColumn(name="user_id")},
