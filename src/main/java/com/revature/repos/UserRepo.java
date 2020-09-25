@@ -103,6 +103,12 @@ private Session session = factory.getCurrentSession();
 
     }
 
+
+
+
+
+
+
     public void deleteUser(User deleteUser){
         getSession().beginTransaction();
         session.delete(deleteUser);
