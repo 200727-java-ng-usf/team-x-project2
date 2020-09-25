@@ -131,6 +131,20 @@ public class UserService {
     }
 
 
+    //delete a user
+    @Transactional
+    public void delete(User deletedUser){
+        userRepo.deleteUser(deletedUser);
+        User testUser = findUserById(deletedUser.getUserId());
+
+        if (!testUser.equals(deletedUser)){
+            throw new RuntimeException("User did not delete");
+        }
+
+
+    }
+
+
 
 
 
