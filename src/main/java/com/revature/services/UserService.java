@@ -64,6 +64,7 @@ public class UserService {
 
 
 
+
     /**
      * Validates that the given user and its fields are valid (not null or empty strings). Does
      * not perform validation on id or role fields.
