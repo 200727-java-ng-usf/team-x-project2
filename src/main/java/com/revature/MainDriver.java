@@ -109,11 +109,25 @@ public class MainDriver {
 //        UserRepo userRepo = new UserRepo();
 ////        System.out.println(userRepo.findUserByCredentials("TestUser", "Test").get());
 //        User newUser = new User("TestUser4", "Test", "TestFirst", "TestLast", "Test4@test.com", "00000");
-////       userRepo.register(newUser);
+//      userRepo.register(newUser);
 //        System.out.println(userRepo.findUserByUsername(newUser.getUsername()));
 //        Set<User> users = userRepo.getAllUsers();
 //        for (User user: users) {
 //            System.out.println(user);
 //        }
+
+       // System.out.println(userRepo.findUserByEmail("Test@test.com"));
+       // System.out.println(userRepo.findUserById(1).get());
+        //testing update
+//        User updatedUser = userRepo.findUserById(6).get();
+//        updatedUser.setUsername("TestUser4");
+//        userRepo.updateUser(updatedUser);
+//        System.out.println(userRepo.findUserById(6).get());
+
+        //testing delete
+//        User deleteUser = userRepo.findUserByUsername(newUser.getUsername()).get();
+//        System.out.println(deleteUser);
+//        userRepo.deleteUser(deleteUser);
+//        System.out.println(userRepo.findUserByUsername(deleteUser.getUsername()).get());
     }
 }

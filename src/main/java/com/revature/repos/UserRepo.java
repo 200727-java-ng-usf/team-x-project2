@@ -52,6 +52,19 @@ private Session session = factory.getCurrentSession();
         return user;
     }
 
+    public Optional<User> findUserByEmail(String email) {
+        getSession().beginTransaction();
+        Optional<User> user = Optional.of(session.createQuery("from users u where u.email = :em", User.class)
+                .setParameter("em", email)
+                .getSingleResult());
+        if (user.equals(Optional.empty())){
+            session.getTransaction().rollback();
+            throw new ResourceNotFoundException("No User found with that email");
+        }
+        session.getTransaction().commit();
+        return user;
+    }
+
     public Set<User> getAllUsers(){
         getSession().beginTransaction();
         Set<User> users = new HashSet<>();
@@ -62,6 +75,39 @@ private Session session = factory.getCurrentSession();
         }
         return users;
 
+    }
+    public Optional<User> findUserById(int id) {
+        getSession().beginTransaction();
+        Optional<User> user = Optional.of(session.createQuery("from users u where u.userId = :id", User.class)
+                .setParameter("id", id)
+                .getSingleResult());
+        if (user.equals(Optional.empty())){
+            session.getTransaction().rollback();
+            throw new ResourceNotFoundException("No User found with that Id number");
+        }
+        session.getTransaction().commit();
+        return user;
+    }
+
+    public void updateUser(User updatedUser){
+        getSession().beginTransaction();
+        session.update(updatedUser);
+        session.getTransaction().commit();
+        User userTest = findUserByCredentials(updatedUser.getUsername(), updatedUser.getPassword()).get();
+        if (userTest.equals(updatedUser)){
+            throw new FailedTransactionException("User failed to update");
+        }
+
+    }
+
+    public void deleteUser(User deleteUser){
+        getSession().beginTransaction();
+        session.delete(deleteUser);
+        session.getTransaction().commit();
+        Optional<User> userTest = findUserById(deleteUser.getUserId());
+        if (userTest.isPresent()){
+            throw new FailedTransactionException("Failed to delete User");
+        }
     }
 
     public Session getSession() {
