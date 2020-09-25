@@ -8,6 +8,7 @@ import com.revature.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
+import javax.persistence.NoResultException;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -23,9 +24,6 @@ private Session session = factory.getCurrentSession();
                 .setParameter("pw", password)
                 .getSingleResult());
         session.getTransaction().commit();
-        if (user.equals(Optional.empty())){
-            throw new AuthenticationException("No User found with that username/password combination");
-        }
         return user;
     }
 
@@ -33,10 +31,6 @@ private Session session = factory.getCurrentSession();
         getSession().beginTransaction();
         session.save(user);
         session.getTransaction().commit();
-        Optional<User> userTest = findUserByCredentials(user.getUsername(), user.getPassword());
-        if (!userTest.isPresent()){
-            throw new FailedTransactionException("New User failed to register");
-        }
     }
 
     public Optional<User> findUserByUsername(String username) {
@@ -44,10 +38,6 @@ private Session session = factory.getCurrentSession();
         Optional<User> user = Optional.of(session.createQuery("from users u where u.username = :un", User.class)
                 .setParameter("un", username)
                 .getSingleResult());
-        if (user.equals(Optional.empty())){
-            session.getTransaction().rollback();
-            throw new ResourceNotFoundException("No User found with that username");
-        }
         session.getTransaction().commit();
         return user;
     }
@@ -57,10 +47,6 @@ private Session session = factory.getCurrentSession();
         Optional<User> user = Optional.of(session.createQuery("from users u where u.email = :em", User.class)
                 .setParameter("em", email)
                 .getSingleResult());
-        if (user.equals(Optional.empty())){
-            session.getTransaction().rollback();
-            throw new ResourceNotFoundException("No User found with that email");
-        }
         session.getTransaction().commit();
         return user;
     }
@@ -70,21 +56,14 @@ private Session session = factory.getCurrentSession();
         Set<User> users = new HashSet<>();
         users.addAll(session.createQuery("from users", User.class).list());
         session.getTransaction().commit();
-        if (users.isEmpty()){
-            throw new ResourceNotFoundException("No users present");
-        }
         return users;
 
     }
     public Optional<User> findUserById(int id) {
         getSession().beginTransaction();
         Optional<User> user = Optional.of(session.createQuery("from users u where u.userId = :id", User.class)
-                .setParameter("id", id)
-                .getSingleResult());
-        if (user.equals(Optional.empty())){
-            session.getTransaction().rollback();
-            throw new ResourceNotFoundException("No User found with that Id number");
-        }
+                       .setParameter("id", id)
+                       .getSingleResult());
         session.getTransaction().commit();
         return user;
     }
@@ -93,21 +72,12 @@ private Session session = factory.getCurrentSession();
         getSession().beginTransaction();
         session.update(updatedUser);
         session.getTransaction().commit();
-        User userTest = findUserByCredentials(updatedUser.getUsername(), updatedUser.getPassword()).get();
-        if (userTest.equals(updatedUser)){
-            throw new FailedTransactionException("User failed to update");
-        }
-
     }
 
     public void deleteUser(User deleteUser){
         getSession().beginTransaction();
         session.delete(deleteUser);
         session.getTransaction().commit();
-        Optional<User> userTest = findUserById(deleteUser.getUserId());
-        if (userTest.isPresent()){
-            throw new FailedTransactionException("Failed to delete User");
-        }
     }
 
     public Session getSession() {
