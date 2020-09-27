@@ -8,6 +8,7 @@ import com.revature.models.UserRole;
 import com.revature.repos.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +29,6 @@ public class UserService {
     //update home only
 
     private UserRepo userRepo;
-
     //no args constructor
     @Autowired
     public UserService(UserRepo repo) {
