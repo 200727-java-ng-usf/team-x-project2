@@ -4,7 +4,9 @@ import com.revature.exceptions.AuthenticationException;
 import com.revature.exceptions.InvalidRequestException;
 import com.revature.models.User;
 import com.revature.repos.UserRepo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserService {
@@ -17,7 +19,12 @@ public class UserService {
     //update password
     //update home only
 
-    private UserRepo userRepo = new UserRepo();
+    private UserRepo userRepo;
+
+    @Autowired
+    public UserService(UserRepo userRepo) {
+        this.userRepo = userRepo;
+    }
 
     //no args constructor
     public UserService() {
@@ -25,6 +32,7 @@ public class UserService {
     }
 
     //validate username and password
+    @Transactional
     public User authenticate(String username, String password) {
         if (username == null || username.trim().equals("") || password == null || password.trim().equals("")) {
             throw new InvalidRequestException("Invalid credential values provided!");
