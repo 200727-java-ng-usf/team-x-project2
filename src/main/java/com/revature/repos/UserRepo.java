@@ -2,11 +2,11 @@ package com.revature.repos;
 
 
 import com.revature.models.User;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -77,6 +77,12 @@ private SessionFactory sessionFactory;
         session.update(updatedUser);
         session.getTransaction().commit();
     }
+
+
+
+
+
+
 
     public void deleteUser(User deleteUser){
         Session session = sessionFactory.getCurrentSession();

@@ -118,13 +118,17 @@ public class MainDriver {
 //        System.out.println(deleteUser);
 //        userRepo.deleteUser(deleteUser);
 //        System.out.println(userRepo.findUserByUsername(deleteUser.getUsername()).get());
-//        System.out.println(userRepo.findUserById(8));
-        try (AnnotationConfigApplicationContext container = new AnnotationConfigApplicationContext(AppConfig.class)){
 
-            UserRepo userRepo = container.getBean( UserRepo.class);
-            System.out.println(userRepo.findUserById(1));
-        } catch (Exception e){
-            e.printStackTrace();
-        }
+        //testing find all
+
+
+//        System.out.println(userRepo.findUserById(8));
+//         try (AnnotationConfigApplicationContext container = new AnnotationConfigApplicationContext(AppConfig.class)){
+
+//             UserRepo userRepo = container.getBean( UserRepo.class);
+//             System.out.println(userRepo.findUserById(1));
+//         } catch (Exception e){
+//             e.printStackTrace();
+//         }
     }
 }
