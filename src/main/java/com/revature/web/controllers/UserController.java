@@ -68,7 +68,7 @@ public class UserController {
 
     @Secured(allowedRoles = {"Admin"})
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(value="/delete", produces =MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping
     public void deleteUser(@RequestParam int id){
         User userToBeDeleted = userService.findUserById(id);
         userService.delete(userToBeDeleted);
