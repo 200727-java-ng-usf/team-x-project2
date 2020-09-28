@@ -68,6 +68,13 @@ public class UserServiceTest {
         sut.findUserById(300); // user with ID 300 does not exist
     }
 
+    @Test(expected = RuntimeException.class)
+    public void getByUsernameDoesNotExist(){
+        sut.findUserByUsername("garbage");
+    }
+
+
+
     @Test(expected = NullPointerException.class)
     public void updateUserThatDoesNotExist() throws IOException {
         // arrange
