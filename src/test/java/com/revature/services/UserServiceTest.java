@@ -106,10 +106,10 @@ public class UserServiceTest {
         sut.findAllUsers();
     }
 
-    @Test(expected = InvalidRequestException.class)
-    public void deleteTest(){
-        sut.delete(testUser);
-    }
+//    @Test(expected = InvalidRequestException.class)
+//    public void deleteTest(){
+//        sut.delete(testUser);
+//    }
 
     @Test()
     public void validateTest(){
