@@ -29,6 +29,7 @@ public class AuthController {
     @GetMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void invalidateSession(HttpServletRequest req){
+        req.removeAttribute("principal");
         req.getSession().invalidate();
     }
 

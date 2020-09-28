@@ -24,16 +24,23 @@ public class UserController {
     }
 
 
-    @ResponseStatus(HttpStatus.OK)
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public Set<User> getAllUsers(){
-        return userService.findAllUsers();
+
+    @GetMapping(produces=MediaType.APPLICATION_JSON_VALUE)
+    public Set<User> getAllUsers()
+    {
+        System.out.println("getAllUsers initialized");
+        Set<User> users = userService.findAllUsers();
+        System.out.println("userService finished");
+        System.out.println(users);
+        return users;
     }
 
 
-    @GetMapping(value="/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value="/id/{id}")
     public User getUserById(@PathVariable int id){
-        return userService.findUserById(id);
+        User user = userService.findUserById(id);
+        System.out.println(user);
+        return user;
     }
 
 
@@ -62,8 +69,9 @@ public class UserController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping(produces =MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void deleteUser(@RequestBody User userToBeDeleted){
+    @GetMapping(value="/delete", produces =MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void deleteUser(@RequestParam int id){
+        User userToBeDeleted = userService.findUserById(id);
         userService.delete(userToBeDeleted);
     }
 

@@ -28,14 +28,14 @@ public class UserRepo {
                 .setParameter("un", username)
                 .setParameter("pw", password)
                 .getSingleResult());
-        session.getTransaction().commit();
+
         return user;
     }
 
     public void register(User user){
         Session session = sessionFactory.getCurrentSession();
         session.save(user);
-        session.getTransaction().commit();
+
     }
 
     public Optional<User> findUserByUsername(String username) {
@@ -43,7 +43,6 @@ public class UserRepo {
         Optional<User> user = Optional.of(session.createQuery("from users u where u.username = :un", User.class)
                 .setParameter("un", username)
                 .getSingleResult());
-        session.getTransaction().commit();
         return user;
     }
 
@@ -52,14 +51,12 @@ public class UserRepo {
         Optional<User> user = Optional.of(session.createQuery("from users u where u.email = :em", User.class)
                 .setParameter("em", email)
                 .getSingleResult());
-        session.getTransaction().commit();
         return user;
     }
 
     public Set<User> getAllUsers(){
         Session session = sessionFactory.getCurrentSession();
         Set<User> users = new HashSet<>(session.createQuery("from users", User.class).list());
-        session.getTransaction().commit();
         return users;
 
     }
@@ -68,21 +65,21 @@ public class UserRepo {
         Optional<User> user = Optional.of(session.createQuery("from users u where u.userId = :id", User.class)
                 .setParameter("id", id)
                 .getSingleResult());
-        session.getTransaction().commit();
+
         return user;
     }
 
     public void updateUser(User updatedUser){
         Session session = sessionFactory.getCurrentSession();
         session.update(updatedUser);
-        session.getTransaction().commit();
+
     }
 
 
     public void deleteUser(User deleteUser){
         Session session = sessionFactory.getCurrentSession();
         session.delete(deleteUser);
-        session.getTransaction().commit();
+
     }
 
 

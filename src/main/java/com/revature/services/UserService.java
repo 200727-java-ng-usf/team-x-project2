@@ -1,6 +1,7 @@
 package com.revature.services;
 
 import com.revature.exceptions.AuthenticationException;
+import com.revature.exceptions.FailedTransactionException;
 import com.revature.exceptions.InvalidRequestException;
 import com.revature.exceptions.ResourceNotFoundException;
 import com.revature.models.User;
@@ -12,7 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import javax.persistence.NoResultException;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -53,17 +56,17 @@ public class UserService {
     }
 
     //find all
-    @Transactional(readOnly=true)
+    @Transactional
     public Set<User> findAllUsers() {
-
+            Set<User> users;
         try {
-            Set<User> users = userRepo.getAllUsers();
-            System.out.println(users);
-            return users;
+            users = new HashSet<>(userRepo.getAllUsers());
+            System.out.println("UserService response: " + users);
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
+        return users;
     }
 
     //find by user id
@@ -75,9 +78,11 @@ public class UserService {
         }
 
         try {
-            return userRepo.findUserById(id).orElseThrow(ResourceNotFoundException::new);
+            User user = userRepo.findUserById(id).orElseThrow(ResourceNotFoundException::new);
+            System.out.println("UserService response: " + user);
+            return user;
         } catch (Exception e) {
-            throw new RuntimeException();
+            throw new ResourceNotFoundException();
         }
 
     }
@@ -125,14 +130,15 @@ public class UserService {
             throw new InvalidRequestException("Invalid user field values provided during registration!");
         }
 
-        Optional<User> existingUser = userRepo.findUserByUsername(newUser.getUsername());
-        if (existingUser.isPresent()) {
-            throw new RuntimeException("Provided username is already in use!");
+        try {
+            Optional<User> existingUser = userRepo.findUserByUsername(newUser.getUsername());
+            if (existingUser.isPresent()) {
+                throw new RuntimeException("Provided username is already in use!");
+            }
+        } catch (NoResultException e){
+            newUser.setUserRole(UserRole.USER);
+            userRepo.register(newUser);
         }
-
-        newUser.setUserRole(UserRole.USER);
-        userRepo.register(newUser);
-
     }
 
     //update user
@@ -153,13 +159,17 @@ public class UserService {
     @Transactional
     public void delete(User deletedUser){
         userRepo.deleteUser(deletedUser);
-        User testUser = findUserById(deletedUser.getUserId());
 
-        if (!testUser.equals(deletedUser)){
-            throw new RuntimeException("User did not delete");
-        }
+       try {
+           User testUser = findUserById(deletedUser.getUserId());
 
+           if (!testUser.equals(deletedUser)) {
+               throw new FailedTransactionException("User did not delete");
+           }
 
+       } catch (ResourceNotFoundException e){
+
+       }
     }
 
 
@@ -182,6 +192,7 @@ public class UserService {
         if (user.getLastName() == null || user.getLastName().trim().equals("")) return false;
         if (user.getUsername() == null || user.getUsername().trim().equals("")) return false;
         if (user.getPassword() == null || user.getPassword().trim().equals("")) return false;
+        if (user.getEmail() == null || user.getEmail().trim().equals("")) return false;
         return true;
     }
 
