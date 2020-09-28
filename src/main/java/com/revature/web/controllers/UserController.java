@@ -3,6 +3,7 @@ package com.revature.web.controllers;
 
 import com.revature.models.User;
 import com.revature.services.UserService;
+import com.revature.web.security.Secured;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -24,7 +25,7 @@ public class UserController {
     }
 
 
-
+    @Secured(allowedRoles = {"Admin"})
     @GetMapping(produces=MediaType.APPLICATION_JSON_VALUE)
     public Set<User> getAllUsers()
     {
@@ -33,19 +34,19 @@ public class UserController {
         return users;
     }
 
-
+    @Secured(allowedRoles = {"Admin", "User"})
     @GetMapping(value="/id/{id}")
     public User getUserById(@PathVariable int id){
         User user = userService.findUserById(id);
         return user;
     }
-
-
+    @Secured(allowedRoles = {"Admin"})
     @GetMapping(value="/search/username", produces=MediaType.APPLICATION_JSON_VALUE)
     public User getUserByUsername(@RequestParam String username) {
         return userService.findUserByUsername(username);
     }
 
+    @Secured(allowedRoles = {"Admin"})
     @GetMapping(value="/search/email", produces =MediaType.APPLICATION_JSON_VALUE)
     public User getUserByEmail(@RequestParam String email){
         return userService.findUserByEmail(email);
@@ -57,7 +58,7 @@ public class UserController {
          userService.register(newUser);
          return userService.findUserByUsername(newUser.getUsername());
     }
-
+    @Secured(allowedRoles = {"Admin", "User"})
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(produces =MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public User updateUser(@RequestBody User updatedUser) throws IOException {
@@ -65,6 +66,7 @@ public class UserController {
         return userService.findUserByUsername(updatedUser.getUsername());
     }
 
+    @Secured(allowedRoles = {"Admin"})
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value="/delete", produces =MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public void deleteUser(@RequestParam int id){
