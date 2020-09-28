@@ -96,8 +96,8 @@ public class UserService {
 
         try {
             return userRepo.findUserByUsername(username).orElseThrow(ResourceNotFoundException::new);
-        } catch (Exception e) {
-            throw new RuntimeException();
+        } catch (ResourceNotFoundException e) {
+            throw new ResourceNotFoundException();
         }
 
     }
@@ -114,7 +114,7 @@ public class UserService {
         try {
             return userRepo.findUserByEmail(email).orElseThrow(ResourceNotFoundException::new);
         } catch (Exception e){
-            throw new RuntimeException();
+            throw new ResourceNotFoundException();
         }
     }
 
@@ -131,7 +131,7 @@ public class UserService {
         try {
             Optional<User> existingUser = userRepo.findUserByUsername(newUser.getUsername());
             if (existingUser.isPresent()) {
-                throw new RuntimeException("Provided username is already in use!");
+                throw new InvalidRequestException("Provided username is already in use!");
             }
         } catch (NoResultException e){
             newUser.setUserRole(UserRole.USER);
@@ -148,7 +148,7 @@ public class UserService {
         userRepo.updateUser(updatedUser);
         User testUser = findUserById(updatedUser.getUserId());
         if (!testUser.equals(updatedUser)){
-            throw new RuntimeException("User did not update");
+            throw new InvalidRequestException("User did not update");
         }
     }
 

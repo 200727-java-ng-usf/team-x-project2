@@ -1,6 +1,7 @@
 package com.revature.services;
 
 import com.revature.exceptions.AuthenticationException;
+import com.revature.exceptions.FailedTransactionException;
 import com.revature.exceptions.InvalidRequestException;
 import com.revature.exceptions.ResourceNotFoundException;
 import com.revature.models.User;
@@ -63,15 +64,49 @@ public class UserServiceTest {
         sut.authenticate("", "");
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = InvalidRequestException.class)
+    public void authenticateCredentialsNull(){
+        sut.authenticate(null, null);
+    }
+
+
+
+    @Test(expected = ResourceNotFoundException.class)
     public void getUserByIdThatDoesNotExist() {
         sut.findUserById(300); // user with ID 300 does not exist
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = ResourceNotFoundException.class)
     public void getByUsernameDoesNotExist(){
         sut.findUserByUsername("garbage");
     }
+
+    @Test(expected = InvalidRequestException.class)
+    public void getByUsernameNull(){
+        sut.findUserByUsername(null);
+    }
+
+    @Test(expected = InvalidRequestException.class)
+    public void getByUsernameEmpty(){
+        sut.findUserByUsername("");
+    }
+
+    @Test(expected = InvalidRequestException.class)
+    public void getByEmailDoesNotExistEmpty(){
+        sut.findUserByEmail("");
+    }
+
+    @Test(expected = InvalidRequestException.class)
+    public void getByEmailDoesNotExistNull(){
+        sut.findUserByEmail(null);
+    }
+
+    @Test(expected = ResourceNotFoundException.class)
+    public void getByEmailDoesNotExist(){
+        sut.findUserByEmail("garbageMail");
+    }
+
+
 
 
 
@@ -84,6 +119,16 @@ public class UserServiceTest {
         sut.update(nullUser);
     }
 
+    @Test(expected = InvalidRequestException.class)
+    public void updateUserThatDoesExists() throws IOException {
+        // arrange
+
+
+        // act
+        sut.update(testUser);
+    }
+
+
 
     @Test(expected = AuthenticationException.class)
     public void authenticationWithUnknownCredentials() {
@@ -91,10 +136,24 @@ public class UserServiceTest {
     }
 
     @Test(expected = InvalidRequestException.class)
-    public void registerWithNullErsUser() {
+    public void registerWithNullUser() {
 
         sut.register(null);
     }
+
+    @Test(expected = InvalidRequestException.class)
+    public void registerWithEmptyUser() {
+
+        testUser = new User("" , "" , "");
+
+        sut.register(testUser);
+    }
+
+
+
+
+
+
 
     @Test(expected = NullPointerException.class)
     public void getAllUsersWithNoUsers() {
@@ -106,10 +165,28 @@ public class UserServiceTest {
         sut.findAllUsers();
     }
 
-//    @Test(expected = InvalidRequestException.class)
-//    public void deleteTest(){
-//        sut.delete(testUser);
-//    }
+    @Test(expected = InvalidRequestException.class)
+    public void deleteTest(){
+        sut.delete(testUser);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void deleteTestNull(){
+        sut.delete(null);
+    }
+
+    @Test(expected = InvalidRequestException.class)
+    public void deleteTestEmpty(){
+
+        testUser = new User("" , "" , "");
+
+        sut.delete(testUser);
+    }
+
+
+
+
+
 
     @Test()
     public void validateTest(){
