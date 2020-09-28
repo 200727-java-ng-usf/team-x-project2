@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -57,8 +58,7 @@ public class UserRepo {
 
     public Set<User> getAllUsers(){
         Session session = sessionFactory.getCurrentSession();
-        Set<User> users = new HashSet<>();
-        users.addAll(session.createQuery("from users", User.class).list());
+        Set<User> users = new HashSet<>(session.createQuery("from users", User.class).list());
         session.getTransaction().commit();
         return users;
 

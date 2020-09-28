@@ -57,7 +57,9 @@ public class UserService {
     public Set<User> findAllUsers() {
 
         try {
-            return userRepo.getAllUsers();
+            Set<User> users = userRepo.getAllUsers();
+            System.out.println(users);
+            return users;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -95,6 +97,22 @@ public class UserService {
             throw new RuntimeException();
         }
 
+    }
+
+    //find by email
+
+    @Transactional
+    public User findUserByEmail(String email){
+
+        if (email == null || email.trim().equals("")){
+            throw new InvalidRequestException("The provided email was null or empty!");
+        }
+
+        try {
+            return userRepo.findUserByEmail(email).orElseThrow(ResourceNotFoundException::new);
+        } catch (Exception e){
+            throw new RuntimeException();
+        }
     }
 
 

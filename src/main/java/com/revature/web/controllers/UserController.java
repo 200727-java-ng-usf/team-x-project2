@@ -4,10 +4,13 @@ package com.revature.web.controllers;
 import com.revature.models.User;
 import com.revature.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/users")
@@ -20,18 +23,48 @@ public class UserController {
         this.userService = userService;
     }
 
+
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<User> getAllUsers(){
-        return (List<User>) userService.findAllUsers();
+    public Set<User> getAllUsers(){
+        return userService.findAllUsers();
     }
+
 
     @GetMapping(value="/id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public User getUserById(@PathVariable int id){
         return userService.findUserById(id);
     }
 
-    @GetMapping(value="/search", produces=MediaType.APPLICATION_JSON_VALUE)
+
+    @GetMapping(value="/search/username", produces=MediaType.APPLICATION_JSON_VALUE)
     public User getUserByUsername(@RequestParam String username) {
         return userService.findUserByUsername(username);
     }
+
+    @GetMapping(value="/search/email", produces =MediaType.APPLICATION_JSON_VALUE)
+    public User getUserByEmail(@RequestParam String email){
+        return userService.findUserByEmail(email);
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(produces=MediaType.APPLICATION_JSON_VALUE, consumes=MediaType.APPLICATION_JSON_VALUE)
+    public User registerNewUser(@RequestBody User newUser){
+         userService.register(newUser);
+         return userService.findUserByUsername(newUser.getUsername());
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping(produces =MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public User updateUser(@RequestBody User updatedUser) throws IOException {
+        userService.update(updatedUser);
+        return userService.findUserByUsername(updatedUser.getUsername());
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping(produces =MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public void deleteUser(@RequestBody User userToBeDeleted){
+        userService.delete(userToBeDeleted);
+    }
+
 }
