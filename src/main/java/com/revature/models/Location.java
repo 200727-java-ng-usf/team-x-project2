@@ -26,11 +26,11 @@ public class Location {
     @Column(name="location_zip_code")
     private String locationZipCode;
 
-    @ManyToMany(mappedBy = "locations")
-    private Set<User> users;
-
-    @OneToMany(mappedBy = "home")
-    private Set<User> homeUsers;
+//    @ManyToMany(mappedBy = "locations")
+//    private Set<User> users;
+//
+//    @OneToMany(mappedBy = "home")
+//    private Set<User> homeUsers;
 
     public Location() {
     }
@@ -55,21 +55,21 @@ public class Location {
         this(copy.locationId, copy.city, copy.state, copy.country, copy.locationZipCode);
     }
 
-    public Set<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Set<User> users) {
-        this.users = users;
-    }
-
-    public Set<User> getHomeUsers() {
-        return homeUsers;
-    }
-
-    public void setHomeUsers(Set<User> homeUsers) {
-        this.homeUsers = homeUsers;
-    }
+//    public Set<User> getUsers() {
+//        return users;
+//    }
+//
+//    public void setUsers(Set<User> users) {
+//        this.users = users;
+//    }
+//
+//    public Set<User> getHomeUsers() {
+//        return homeUsers;
+//    }
+//
+//    public void setHomeUsers(Set<User> homeUsers) {
+//        this.homeUsers = homeUsers;
+//    }
 
     public int getLocationId() {
         return locationId;
