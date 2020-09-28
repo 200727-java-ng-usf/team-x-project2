@@ -61,7 +61,6 @@ public class UserService {
             Set<User> users;
         try {
             users = new HashSet<>(userRepo.getAllUsers());
-            System.out.println("UserService response: " + users);
 
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -79,7 +78,6 @@ public class UserService {
 
         try {
             User user = userRepo.findUserById(id).orElseThrow(ResourceNotFoundException::new);
-            System.out.println("UserService response: " + user);
             return user;
         } catch (Exception e) {
             throw new ResourceNotFoundException();

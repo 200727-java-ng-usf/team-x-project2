@@ -28,10 +28,8 @@ public class UserController {
     @GetMapping(produces=MediaType.APPLICATION_JSON_VALUE)
     public Set<User> getAllUsers()
     {
-        System.out.println("getAllUsers initialized");
+
         Set<User> users = userService.findAllUsers();
-        System.out.println("userService finished");
-        System.out.println(users);
         return users;
     }
 
@@ -39,7 +37,6 @@ public class UserController {
     @GetMapping(value="/id/{id}")
     public User getUserById(@PathVariable int id){
         User user = userService.findUserById(id);
-        System.out.println(user);
         return user;
     }
 
