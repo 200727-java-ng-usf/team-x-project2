@@ -49,10 +49,12 @@ public class UserService {
             throw new InvalidRequestException("Invalid credential values provided!");
         }
 
-
-        return userRepo.findUserByCredentials(username, password)
-                .orElseThrow(AuthenticationException::new);
-
+        try {
+            return userRepo.findUserByCredentials(username, password)
+                    .orElseThrow(AuthenticationException::new);
+        } catch (NoResultException nre){
+            throw new AuthenticationException("The Credentials provided does not match any Username/Password combination on record!");
+        }
     }
 
     //find all
