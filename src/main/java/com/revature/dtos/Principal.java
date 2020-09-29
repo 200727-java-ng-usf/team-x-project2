@@ -15,7 +15,7 @@ private String username;
 
 private UserRole userRole;
 
-private Location Home;
+private Location home;
 
     public Principal() {
     }
@@ -24,7 +24,7 @@ private Location Home;
         this.userId = userId;
         this.username = username;
         this.userRole = userRole;
-        Home = home;
+        this.home = home;
     }
 
     public int getUserId() {
@@ -52,11 +52,11 @@ private Location Home;
     }
 
     public Location getHome() {
-        return Home;
+        return home;
     }
 
     public void setHome(Location home) {
-        Home = home;
+        home = home;
     }
 
     public String stringify() throws JsonProcessingException {
@@ -72,12 +72,12 @@ private Location Home;
         return userId == principal.userId &&
                 Objects.equals(username, principal.username) &&
                 userRole == principal.userRole &&
-                Objects.equals(Home, principal.Home);
+                Objects.equals(home, principal.home);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, username, userRole, Home);
+        return Objects.hash(userId, username, userRole, home);
     }
 
     @Override
@@ -86,7 +86,7 @@ private Location Home;
                 "userId=" + userId +
                 ", username='" + username + '\'' +
                 ", userRole=" + userRole +
-                ", Home=" + Home +
+                ", Home=" + home +
                 '}';
     }
 }

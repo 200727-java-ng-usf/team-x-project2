@@ -1,6 +1,7 @@
 package com.revature.services;
 
 import com.revature.exceptions.AuthenticationException;
+import com.revature.exceptions.FailedTransactionException;
 import com.revature.exceptions.InvalidRequestException;
 import com.revature.exceptions.ResourceNotFoundException;
 import com.revature.models.User;
@@ -12,7 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import javax.persistence.NoResultException;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -53,15 +56,16 @@ public class UserService {
     }
 
     //find all
-    @Transactional(readOnly=true)
+    @Transactional
     public Set<User> findAllUsers() {
-
+            Set<User> users;
         try {
-            return userRepo.getAllUsers();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+            users = new HashSet<>(userRepo.getAllUsers());
 
+        } catch (NullPointerException e) {
+            throw new NullPointerException();
+        }
+        return users;
     }
 
     //find by user id
@@ -73,9 +77,10 @@ public class UserService {
         }
 
         try {
-            return userRepo.findUserById(id).orElseThrow(ResourceNotFoundException::new);
+            User user = userRepo.findUserById(id).orElseThrow(ResourceNotFoundException::new);
+            return user;
         } catch (Exception e) {
-            throw new RuntimeException();
+            throw new ResourceNotFoundException();
         }
 
     }
@@ -91,10 +96,26 @@ public class UserService {
 
         try {
             return userRepo.findUserByUsername(username).orElseThrow(ResourceNotFoundException::new);
-        } catch (Exception e) {
-            throw new RuntimeException();
+        } catch (ResourceNotFoundException e) {
+            throw new ResourceNotFoundException();
         }
 
+    }
+
+    //find by email
+
+    @Transactional
+    public User findUserByEmail(String email){
+
+        if (email == null || email.trim().equals("")){
+            throw new InvalidRequestException("The provided email was null or empty!");
+        }
+
+        try {
+            return userRepo.findUserByEmail(email).orElseThrow(ResourceNotFoundException::new);
+        } catch (Exception e){
+            throw new ResourceNotFoundException();
+        }
     }
 
 
@@ -107,14 +128,15 @@ public class UserService {
             throw new InvalidRequestException("Invalid user field values provided during registration!");
         }
 
-        Optional<User> existingUser = userRepo.findUserByUsername(newUser.getUsername());
-        if (existingUser.isPresent()) {
-            throw new RuntimeException("Provided username is already in use!");
+        try {
+            Optional<User> existingUser = userRepo.findUserByUsername(newUser.getUsername());
+            if (existingUser.isPresent()) {
+                throw new InvalidRequestException("Provided username is already in use!");
+            }
+        } catch (NoResultException e){
+            newUser.setUserRole(UserRole.USER);
+            userRepo.register(newUser);
         }
-
-        newUser.setUserRole(UserRole.USER);
-        userRepo.register(newUser);
-
     }
 
     //update user
@@ -126,7 +148,7 @@ public class UserService {
         userRepo.updateUser(updatedUser);
         User testUser = findUserById(updatedUser.getUserId());
         if (!testUser.equals(updatedUser)){
-            throw new RuntimeException("User did not update");
+            throw new InvalidRequestException("User did not update");
         }
     }
 
@@ -135,13 +157,17 @@ public class UserService {
     @Transactional
     public void delete(User deletedUser){
         userRepo.deleteUser(deletedUser);
-        User testUser = findUserById(deletedUser.getUserId());
 
-        if (!testUser.equals(deletedUser)){
-            throw new RuntimeException("User did not delete");
-        }
+       try {
+           User testUser = findUserById(deletedUser.getUserId());
 
+           if (!testUser.equals(deletedUser)) {
+               throw new FailedTransactionException("User did not delete");
+           }
 
+       } catch (ResourceNotFoundException e){
+
+       }
     }
 
 
@@ -164,6 +190,7 @@ public class UserService {
         if (user.getLastName() == null || user.getLastName().trim().equals("")) return false;
         if (user.getUsername() == null || user.getUsername().trim().equals("")) return false;
         if (user.getPassword() == null || user.getPassword().trim().equals("")) return false;
+        if (user.getEmail() == null || user.getEmail().trim().equals("")) return false;
         return true;
     }
 
