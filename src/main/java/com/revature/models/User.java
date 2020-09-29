@@ -2,6 +2,8 @@ package com.revature.models;
 
 
 import javax.persistence.*;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -92,6 +94,20 @@ public class User {
 
     public void setLocations(Set<Location> locations) {
         this.locations = locations;
+    }
+
+    public void addLocations(Location locations){
+        if (this.locations == null || this.locations.isEmpty()){
+            Set<Location> setOfLocations = new HashSet<>();
+            setOfLocations.add(locations);
+            this.locations = setOfLocations;
+        }else {
+            this.locations.add(locations);
+        }
+    }
+
+    public void addLocations(Set<Location> locations){
+        this.locations.addAll(locations);
     }
 
     public Location getHome() {
