@@ -17,25 +17,25 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ErrorResponseAspect {
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.CONFLICT)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ErrorResponse handleAuthenticationException(AuthenticationException ae){
         return new ErrorResponse(401, ae.getMessage());
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.CONFLICT)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleFailedTransactionException(FailedTransactionException fte){
         return new ErrorResponse(500, fte.getMessage());
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.CONFLICT)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleInvalidRequestException(InvalidRequestException ire){
         return new ErrorResponse(400, ire.getMessage());
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.CONFLICT)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleResourceNotFoundException (ResourceNotFoundException rnfe){
         return new ErrorResponse(404, rnfe.getMessage());
     }
