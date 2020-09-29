@@ -62,8 +62,8 @@ public class UserService {
         try {
             users = new HashSet<>(userRepo.getAllUsers());
 
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (NullPointerException e) {
+            throw new NullPointerException();
         }
         return users;
     }

@@ -14,10 +14,14 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 
+import javax.persistence.NoResultException;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 public class UserServiceTest {
 
@@ -36,6 +40,9 @@ public class UserServiceTest {
     private UserRepo mockUserRepo = Mockito.mock(UserRepo.class);
     Set<User> mockUsers = new HashSet<>();
     private User testUser;
+    private User testUser2;
+    private User testUser3;
+
 
 
 
@@ -49,12 +56,23 @@ public class UserServiceTest {
         mockUsers.add(new User("Bob", "Bailey", "bbailey", "dev", "dev@app.com", "Admin"));
 
         testUser = new User("eli" , "eli1" , "elimaiil");
+
+        testUser2 = new User(1, "test" , "password" , "test", "test" , "test" , "1234" , UserRole.ADMIN);
+
+        testUser3 = new User("eli" , "password" ,"eli@mail");
+
     }
 
     //tests
     @Test(expected = InvalidRequestException.class)
     public void getInvalidUserBad() {
         sut.findUserById(-1); // there is no user with this ID
+    }
+
+
+    @Test
+    public void getByID(){
+        assertEquals(1, testUser2.getUserId());
     }
 
 
@@ -81,6 +99,11 @@ public class UserServiceTest {
         sut.findUserByUsername("garbage");
     }
 
+    @Test
+    public void getByUsername(){
+        assertEquals("eli", testUser.getUsername());
+    }
+
     @Test(expected = InvalidRequestException.class)
     public void getByUsernameNull(){
         sut.findUserByUsername(null);
@@ -104,6 +127,11 @@ public class UserServiceTest {
     @Test(expected = ResourceNotFoundException.class)
     public void getByEmailDoesNotExist(){
         sut.findUserByEmail("garbageMail");
+    }
+
+    @Test
+    public void getByEmail(){
+        assertEquals("elimaiil", testUser.getEmail());
     }
 
 
@@ -142,6 +170,15 @@ public class UserServiceTest {
     }
 
     @Test(expected = InvalidRequestException.class)
+    public void registerWithSameName() {
+
+        sut.register(testUser);
+        sut.register(testUser3);
+    }
+
+
+
+    @Test(expected = InvalidRequestException.class)
     public void registerWithEmptyUser() {
 
         testUser = new User("" , "" , "");
@@ -150,8 +187,7 @@ public class UserServiceTest {
     }
 
 
-
-
+    
 
 
 
@@ -164,6 +200,8 @@ public class UserServiceTest {
         // act
         sut.findAllUsers();
     }
+
+//    @Test(expected = )
 
     @Test(expected = InvalidRequestException.class)
     public void deleteTest(){
@@ -188,10 +226,24 @@ public class UserServiceTest {
 
 
 
+
+
+
     @Test()
     public void validateTest(){
 
         Assert.assertTrue("",sut.isUserValid(new User("elipaetow","eli123","eli@mail","password","User")));
+    }
+
+    @Test()
+    public void validateTestNull(){
+
+        Assert.assertFalse("",sut.isUserValid(new User(null,"eli123","eli@mail","password","User")));
+    }
+    @Test()
+    public void validateTestEmpty(){
+
+        Assert.assertFalse("",sut.isUserValid(new User("elipaetow","","eli@mail","password","User")));
     }
 
 
