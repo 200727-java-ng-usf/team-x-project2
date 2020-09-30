@@ -1,6 +1,7 @@
 package com.revature.repos;
 
 
+import com.revature.models.Location;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -13,5 +14,8 @@ public class LocationRepo {
     @Autowired
     public LocationRepo(SessionFactory factory) {
         sessionFactory = factory;
+    }
+
+    public static void addNewLocation(Location newLocation) {
     }
 }
