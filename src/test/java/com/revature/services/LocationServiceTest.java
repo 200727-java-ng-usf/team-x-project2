@@ -46,6 +46,7 @@ public class LocationServiceTest {
         assertEquals(2, testLocation1.getLocationId());
     }
 
+    //need to sut.findbyid
 
     //get all
     @Test(expected = NullPointerException.class)
