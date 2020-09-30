@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public class LocationRepo {
 
-    private SessionFactory sessionFactory;
+    private  SessionFactory sessionFactory;
 
     @Autowired
     public LocationRepo(SessionFactory factory) {
@@ -20,12 +20,14 @@ public class LocationRepo {
     }
 
 
-    public static void addNewLocation(Location newLocation) {
-
+    public void addNewLocation(Location newLocation) {
+        Session session = sessionFactory.getCurrentSession();
+        session.save(newLocation);
     }
 
 
-        //find location by id
+
+    //find location by id
         public Optional<Location> findLocationById ( int id){
             Session session = sessionFactory.getCurrentSession();
             Optional<Location> location = Optional.of(session.createQuery("from locations l where l.locationId = :id", Location.class)
@@ -34,4 +36,13 @@ public class LocationRepo {
 
             return location;
         }
+
+    public Optional<Location> findLocationByZipCode(String locationZipCode) {
+        Session session = sessionFactory.getCurrentSession();
+        Optional<Location> location = Optional.of(session.createQuery("from locations l where l.locationZipCode = :zip", Location.class)
+                .setParameter("zip", locationZipCode)
+                .getSingleResult());
+
+        return location;
     }
+}
