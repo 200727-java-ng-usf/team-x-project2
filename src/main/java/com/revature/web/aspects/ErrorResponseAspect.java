@@ -39,7 +39,13 @@ public class ErrorResponseAspect {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.GONE)
-    public ErrorResponse handleGoneException (GoneException ge){
+    public ErrorResponse handleGoneException (GoneException ge) {
         return new ErrorResponse(410, ge.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleResourceAlreadySavedException (ResourceAlreadySavedException rase){
+        return new ErrorResponse(409, rase.getMessage());
     }
 }
