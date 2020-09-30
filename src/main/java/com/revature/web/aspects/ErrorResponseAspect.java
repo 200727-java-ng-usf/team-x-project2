@@ -2,10 +2,7 @@ package com.revature.web.aspects;
 
 
 import com.revature.dtos.ErrorResponse;
-import com.revature.exceptions.AuthenticationException;
-import com.revature.exceptions.FailedTransactionException;
-import com.revature.exceptions.InvalidRequestException;
-import com.revature.exceptions.ResourceNotFoundException;
+import com.revature.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -38,5 +35,11 @@ public class ErrorResponseAspect {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleResourceNotFoundException (ResourceNotFoundException rnfe){
         return new ErrorResponse(404, rnfe.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.GONE)
+    public ErrorResponse handleGoneException (GoneException ge){
+        return new ErrorResponse(410, ge.getMessage());
     }
 }
