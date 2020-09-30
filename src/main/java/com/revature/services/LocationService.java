@@ -1,10 +1,11 @@
 package com.revature.services;
 
 
+
+
 import com.revature.exceptions.InvalidRequestException;
 import com.revature.exceptions.ResourceNotFoundException;
 import com.revature.models.Location;
-import com.revature.models.User;
 import com.revature.repos.LocationRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,16 @@ public class LocationService {
     public LocationService(LocationRepo repo){
         System.out.println("LocationService no-args constructor invoked!");
         locationRepo = repo;
+    }
+
+
+    public static void addNewLocation(Location newLocation) {
+        LocationRepo.addNewLocation(newLocation);
+        findLocationByZipCode(newLocation.getLocationZipCode());
+    }
+
+    public static Location findLocationByZipCode(String locationZipCode) {
+        return null;
     }
 
     //find location by id

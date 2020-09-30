@@ -2,7 +2,6 @@ package com.revature.repos;
 
 
 import com.revature.models.Location;
-import com.revature.models.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +22,22 @@ public class LocationRepo {
     }
 
 
+
+
+
+    public static void addNewLocation(Location newLocation) {
+
+    }
+
+    //find all locations
+    public Set<Location> getAllLocations() {
+        Session session = sessionFactory.getCurrentSession();
+        Set<Location> locations = new HashSet<>(session.createQuery("from locations", Location.class).list());
+        return locations;
+
+    }
+
+
     //find location by id
     public Optional<Location> findLocationById(int id) {
         Session session = sessionFactory.getCurrentSession();
@@ -32,12 +47,5 @@ public class LocationRepo {
 
         return location;
     }
-
-    //find all locations
-    public Set<Location> getAllLocations(){
-        Session session = sessionFactory.getCurrentSession();
-        Set<Location> locations = new HashSet<>(session.createQuery("from locations", Location.class).list());
-        return locations;
-
-    }
 }
+
