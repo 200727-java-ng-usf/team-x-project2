@@ -34,6 +34,7 @@ public class LocationServiceTest {
 
     //tests
     //idtests
+    //why though
 //    @Test(expected = InvalidRequestException.class)
 //    public void getInvalidUserBad() {
 //        sut.findLocationById(0); // there is no user with this ID
