@@ -39,10 +39,8 @@ public class LocationRepo {
 
     public Optional<Location> findLocationByZipCode(String locationZipCode) {
         Session session = sessionFactory.getCurrentSession();
-        Optional<Location> location = Optional.of(session.createQuery("from locations l where l.locationZipCode = :zip", Location.class)
+        return Optional.of(session.createQuery("from locations l where l.locationZipCode = :zip", Location.class)
                 .setParameter("zip", locationZipCode)
                 .getSingleResult());
-
-        return location;
     }
 }
