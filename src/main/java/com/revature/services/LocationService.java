@@ -10,6 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.NoResultException;
+import java.util.HashSet;
+import java.util.Set;
+
 @Service
 public class LocationService {
 
@@ -30,14 +34,28 @@ public class LocationService {
         }
 
         try {
-            Location location = locationRepo.findUserById(id).orElseThrow(ResourceNotFoundException::new);
+            Location location = locationRepo.findLocationById(id).orElseThrow(ResourceNotFoundException::new);
             return location;
-        } catch (Exception e) {
+        } catch (NoResultException e) {
             throw new ResourceNotFoundException();
         }
 
     }
 
+
+
+    //find all locations
+    @Transactional
+    public Set<Location> findAllLocatins() {
+        Set<Location> locations;
+        try {
+            locations = new HashSet<>(locationRepo.getAllLocations());
+
+        } catch (NullPointerException e) {
+            throw new NullPointerException();
+        }
+        return locations;
+    }
 
 
 

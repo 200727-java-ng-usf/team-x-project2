@@ -47,6 +47,17 @@ public class LocationServiceTest {
     }
 
 
+    //get all
+    @Test(expected = NullPointerException.class)
+    public void getAllLocationsWithNoLocations() {
+        // arrange
+        sut = null;
+        mockLocations.removeAll(mockLocations);
+
+        // act
+        sut.findAllLocatins();
+    }
+
     //teardown
     @After
     public void tearDown() {
