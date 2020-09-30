@@ -59,4 +59,23 @@ public class UserLocationService {
         userRepo.updateUser(user);
         return user;
     }
+
+    @Transactional
+    public User addFavoriteLocation(Location favorite, int userId) {
+        User user;
+        try{
+            locationRepo.findLocationByZipCode(favorite.getLocationZipCode()).get();
+        } catch (NoResultException nre){
+            locationRepo.addNewLocation(favorite);
+        }
+        try{
+            user = userRepo.findUserById(userId).get();
+        } catch (NoResultException nre){
+            throw new GoneException("User Not found!");
+        }
+        favorite = locationRepo.findLocationByZipCode(favorite.getLocationZipCode()).get();
+        user.addLocations(favorite);
+        userRepo.updateUser(user);
+        return user;
+    }
 }

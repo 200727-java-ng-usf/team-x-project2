@@ -33,4 +33,11 @@ public class UserLocationController {
         Principal principal = (Principal) request.getSession().getAttribute("principal");
         return userLocationService.addHomeLocation(home, principal.getUserId());
     }
+
+    @PutMapping(value="/favorites", produces = MediaType.APPLICATION_JSON_VALUE)
+    public User addFavoriteLocationToUser(@RequestBody Location favorite, HttpServletRequest request){
+        Principal principal = (Principal) request.getSession().getAttribute("principal");
+        return userLocationService.addFavoriteLocation(favorite, principal.getUserId());
+    }
+
 }
