@@ -96,7 +96,7 @@ public class LocationServiceTest {
 
 
     //delete tests
-
+//delete
 
     @Test(expected = NullPointerException.class)
     public void deleteTestNull(){
