@@ -44,8 +44,6 @@ public class UserServiceTest {
     private User testUser3;
 
 
-
-
     //setup
     @Before
     public void setup() {
@@ -55,25 +53,30 @@ public class UserServiceTest {
         mockUsers.add(new User("Alice", "Anderson", "aanderson", "password", "admin@app.com", "User"));
         mockUsers.add(new User("Bob", "Bailey", "bbailey", "dev", "dev@app.com", "Admin"));
 
-        testUser = new User("eli" , "eli1" , "elimaiil");
+        testUser = new User("eli", "eli1", "elimaiil");
 
-        testUser2 = new User(1, "test" , "password" , "test", "test" , "test" , "1234" , UserRole.ADMIN);
+        testUser2 = new User(1, "test", "password", "test", "test", "test", "1234", UserRole.ADMIN);
 
-        testUser3 = new User("eli" , "password" ,"eli@mail");
+        testUser3 = new User("eli", "password", "eli@mail");
 
     }
 
     //tests
     @Test(expected = InvalidRequestException.class)
     public void getInvalidUserBad() {
-        sut.findUserById(-1); // there is no user with this ID
+        sut.findUserById(-1);
+
+
+        // there is no user with this ID
     }
 
 
     @Test
-    public void getByID(){
+    public void getByID() {
         assertEquals(1, testUser2.getUserId());
     }
+
+
 
 
     @Test(expected = InvalidRequestException.class)
@@ -83,10 +86,9 @@ public class UserServiceTest {
     }
 
     @Test(expected = InvalidRequestException.class)
-    public void authenticateCredentialsNull(){
+    public void authenticateCredentialsNull() {
         sut.authenticate(null, null);
     }
-
 
 
     @Test(expected = ResourceNotFoundException.class)
@@ -95,47 +97,44 @@ public class UserServiceTest {
     }
 
     @Test(expected = ResourceNotFoundException.class)
-    public void getByUsernameDoesNotExist(){
+    public void getByUsernameDoesNotExist() {
         sut.findUserByUsername("garbage");
     }
 
     @Test
-    public void getByUsername(){
+    public void getByUsername() {
         assertEquals("eli", testUser.getUsername());
     }
 
     @Test(expected = InvalidRequestException.class)
-    public void getByUsernameNull(){
+    public void getByUsernameNull() {
         sut.findUserByUsername(null);
     }
 
     @Test(expected = InvalidRequestException.class)
-    public void getByUsernameEmpty(){
+    public void getByUsernameEmpty() {
         sut.findUserByUsername("");
     }
 
     @Test(expected = InvalidRequestException.class)
-    public void getByEmailDoesNotExistEmpty(){
+    public void getByEmailDoesNotExistEmpty() {
         sut.findUserByEmail("");
     }
 
     @Test(expected = InvalidRequestException.class)
-    public void getByEmailDoesNotExistNull(){
+    public void getByEmailDoesNotExistNull() {
         sut.findUserByEmail(null);
     }
 
     @Test(expected = ResourceNotFoundException.class)
-    public void getByEmailDoesNotExist(){
+    public void getByEmailDoesNotExist() {
         sut.findUserByEmail("garbageMail");
     }
 
     @Test
-    public void getByEmail(){
+    public void getByEmail() {
         assertEquals("elimaiil", testUser.getEmail());
     }
-
-
-
 
 
     @Test(expected = NullPointerException.class)
@@ -157,7 +156,6 @@ public class UserServiceTest {
     }
 
 
-
     @Test(expected = AuthenticationException.class)
     public void authenticationWithUnknownCredentials() {
         sut.authenticate("doesNotExist", "user");
@@ -177,18 +175,33 @@ public class UserServiceTest {
     }
 
 
-
     @Test(expected = InvalidRequestException.class)
     public void registerWithEmptyUser() {
 
-        testUser = new User("" , "" , "");
+        testUser = new User("", "", "");
 
         sut.register(testUser);
     }
 
 
-    
 
+
+    //get all tests
+//    @Test(expected = NullPointerException.class)
+//    public void GetAllUsersBad(){
+//        Mockito.when(mockUserRepo.findUserById(1)).thenThrow(NullPointerException.class);
+//        mockUserRepo.getAllUsers();
+//    }
+
+    @Test
+    public void getAllusers(){
+        Set<User> users = new HashSet<>();
+        users.add(testUser);
+        Mockito.when(mockUserRepo.getAllUsers()).thenReturn(users);
+        Set<User> actualResult = sut.findAllUsers();
+        Assert.assertEquals(users, actualResult);
+
+    }
 
 
     @Test(expected = NullPointerException.class)
@@ -201,49 +214,42 @@ public class UserServiceTest {
         sut.findAllUsers();
     }
 
-//    @Test(expected = )
 
     @Test(expected = InvalidRequestException.class)
-    public void deleteTest(){
+    public void deleteTest() {
         sut.delete(testUser);
     }
 
     @Test(expected = NullPointerException.class)
-    public void deleteTestNull(){
+    public void deleteTestNull() {
         sut.delete(null);
     }
 
     @Test(expected = InvalidRequestException.class)
-    public void deleteTestEmpty(){
+    public void deleteTestEmpty() {
 
-        testUser = new User("" , "" , "");
+        testUser = new User("", "", "");
 
         sut.delete(testUser);
     }
 
 
-
-
-
-
-
-
-
     @Test()
-    public void validateTest(){
+    public void validateTest() {
 
-        Assert.assertTrue("",sut.isUserValid(new User("elipaetow","eli123","eli@mail","password","User")));
+        Assert.assertTrue("", sut.isUserValid(new User("elipaetow", "eli123", "eli@mail", "password", "User")));
     }
 
     @Test()
-    public void validateTestNull(){
+    public void validateTestNull() {
 
-        Assert.assertFalse("",sut.isUserValid(new User(null,"eli123","eli@mail","password","User")));
+        Assert.assertFalse("", sut.isUserValid(new User(null, "eli123", "eli@mail", "password", "User")));
     }
-    @Test()
-    public void validateTestEmpty(){
 
-        Assert.assertFalse("",sut.isUserValid(new User("elipaetow","","eli@mail","password","User")));
+    @Test()
+    public void validateTestEmpty() {
+
+        Assert.assertFalse("", sut.isUserValid(new User("elipaetow", "", "eli@mail", "password", "User")));
     }
 
 

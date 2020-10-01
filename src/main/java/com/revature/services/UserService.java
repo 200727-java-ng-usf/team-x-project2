@@ -1,9 +1,6 @@
 package com.revature.services;
 
-import com.revature.exceptions.AuthenticationException;
-import com.revature.exceptions.FailedTransactionException;
-import com.revature.exceptions.InvalidRequestException;
-import com.revature.exceptions.ResourceNotFoundException;
+import com.revature.exceptions.*;
 import com.revature.models.User;
 import com.revature.models.UserRole;
 import com.revature.repos.UserRepo;
@@ -81,7 +78,7 @@ public class UserService {
         try {
             User user = userRepo.findUserById(id).orElseThrow(ResourceNotFoundException::new);
             return user;
-        } catch (Exception e) {
+        } catch (ResourceNotFoundException e) {
             throw new ResourceNotFoundException();
         }
 
@@ -129,16 +126,23 @@ public class UserService {
         if (!isUserValid(newUser)) {
             throw new InvalidRequestException("Invalid user field values provided during registration!");
         }
-
         try {
-            Optional<User> existingUser = userRepo.findUserByUsername(newUser.getUsername());
-            if (existingUser.isPresent()) {
-                throw new InvalidRequestException("Provided username is already in use!");
+            Optional<User> testUser = userRepo.findUserByEmail(newUser.getEmail());
+            if (testUser.isPresent()){
+                throw new ResourceAlreadySavedException("That email is taken!");
             }
-        } catch (NoResultException e){
-            newUser.setUserRole(UserRole.USER);
-            userRepo.register(newUser);
+        } catch (NoResultException nre){
+            try {
+                Optional<User> existingUser = userRepo.findUserByUsername(newUser.getUsername());
+                if (existingUser.isPresent()) {
+                    throw new ResourceAlreadySavedException("Provided username is already in use!");
+                }
+            } catch (NoResultException e){
+                newUser.setUserRole(UserRole.USER);
+                userRepo.register(newUser);
+            }
         }
+
     }
 
     //update user
