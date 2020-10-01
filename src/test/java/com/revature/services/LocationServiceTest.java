@@ -1,5 +1,6 @@
 package com.revature.services;
 
+import com.revature.exceptions.FailedTransactionException;
 import com.revature.exceptions.InvalidRequestException;
 import com.revature.exceptions.ResourceAlreadySavedException;
 import com.revature.exceptions.ResourceNotFoundException;
@@ -125,6 +126,14 @@ public class LocationServiceTest {
 
         sut.delete(testLocation);
     }
+
+
+
+//    @Test(expected = ResourceNotFoundException.class)
+//    public void deleteTest(){
+//        Location testLocation9 = new Location();
+//        sut.delete(testLocation9);
+//    }
 
     //teardown
     @After
