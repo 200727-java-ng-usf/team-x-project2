@@ -138,23 +138,23 @@ public class UserServiceTest {
 
 
 
-    @Test(expected = NullPointerException.class)
-    public void updateUserThatDoesNotExist() throws IOException {
-        // arrange
-        User nullUser = null;
+//    @Test(expected = NullPointerException.class)
+//    public void updateUserThatDoesNotExist() throws IOException {
+//        // arrange
+//        User nullUser = null;
+//
+//        // act
+//        sut.update(nullUser);
+//    }
 
-        // act
-        sut.update(nullUser);
-    }
-
-    @Test(expected = InvalidRequestException.class)
-    public void updateUserThatDoesExists() throws IOException {
-        // arrange
-
-
-        // act
-        sut.update(testUser);
-    }
+//    @Test(expected = InvalidRequestException.class)
+//    public void updateUserThatDoesExists() throws IOException {
+//        // arrange
+//
+//
+//        // act
+//        sut.update(testUser);
+//    }
 
 
 
