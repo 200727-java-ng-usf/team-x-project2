@@ -1,6 +1,7 @@
 package com.revature.services;
 
 import com.revature.exceptions.GoneException;
+import com.revature.exceptions.ResourceNotFoundException;
 import com.revature.models.Location;
 import com.revature.models.User;
 import com.revature.repos.LocationRepo;
@@ -35,9 +36,13 @@ public class UserLocationService {
         try {
             User user = userRepo.findUserById(userId).get();
             favoriteLocations = user.getLocations();
+            if (favoriteLocations.isEmpty()){
+                throw new ResourceNotFoundException(user.getUsername() + " has no Favorite Locations");
+            }
         } catch (NoResultException nre) {
             throw new GoneException("User not found!");
         }
+
         return favoriteLocations;
     }
 

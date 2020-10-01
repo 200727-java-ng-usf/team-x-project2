@@ -1,9 +1,6 @@
 package com.revature.services;
 
-import com.revature.exceptions.AuthenticationException;
-import com.revature.exceptions.FailedTransactionException;
-import com.revature.exceptions.InvalidRequestException;
-import com.revature.exceptions.ResourceNotFoundException;
+import com.revature.exceptions.*;
 import com.revature.models.User;
 import com.revature.models.UserRole;
 import com.revature.repos.UserRepo;
@@ -21,33 +18,29 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class UserServiceTest {
 
 
-    //update
-    //register
-    //findall
-    //authenticate
-    //findbyid
 
-    //findbyusername
-    //delete
-    //isuservalid
 
     private UserService sut;
-    private UserRepo mockUserRepo = Mockito.mock(UserRepo.class);
+    private UserRepo userRepo = Mockito.mock(UserRepo.class);
     Set<User> mockUsers = new HashSet<>();
     private User testUser;
     private User testUser2;
     private User testUser3;
+    private User testUser4;
+    private User testUser5;
+    private User testUser6;
 
 
     //setup
     @Before
     public void setup() {
-        sut = new UserService(mockUserRepo);
+        sut = new UserService(userRepo);
         mockUsers.add(new User("Adam", "Inn", "admin", "secret", "admin@app.com", "Admin"));
         mockUsers.add(new User("Manny", "Gerr", "manager", "manage", "manager@app.com", "User"));
         mockUsers.add(new User("Alice", "Anderson", "aanderson", "password", "admin@app.com", "User"));
@@ -59,21 +52,32 @@ public class UserServiceTest {
 
         testUser3 = new User("eli", "password", "eli@mail");
 
+        testUser4 = new User("james", "password", "eli@mail"  );
+
+
+
     }
 
-    //tests
+    @Test(expected = AuthenticationException.class)
+    public void authenticationWithUnknownCredentials() {
+        Mockito.when(userRepo.findUserByCredentials("doesNotExist", "user")).thenThrow(NoResultException.class);
+        sut.authenticate("doesNotExist", "user");
+    }
+
     @Test(expected = InvalidRequestException.class)
-    public void getInvalidUserBad() {
-        sut.findUserById(-1);
-
-
-        // there is no user with this ID
+    public void authenticationWithNullCredentials(){
+        sut.authenticate(null, null);
     }
 
+    @Test(expected = InvalidRequestException.class)
+    public void authenticationWithEmptyCredentials(){
+        sut.authenticate("","");
+    }
 
     @Test
-    public void getByID() {
-        assertEquals(1, testUser2.getUserId());
+    public void authenticateTrue(){
+        Mockito.when(userRepo.findUserByCredentials(testUser.getUsername(), testUser.getPassword())).thenReturn(Optional.of(testUser));
+        Assert.assertEquals(testUser, sut.authenticate(testUser.getUsername(), testUser.getPassword()));
     }
 
 
@@ -90,20 +94,56 @@ public class UserServiceTest {
         sut.authenticate(null, null);
     }
 
+    @Test
+    public void getAllusers(){
+        Set<User> users = new HashSet<>();
+        users.add(testUser);
+        Mockito.when(userRepo.getAllUsers()).thenReturn(users);
+        Set<User> actualResult = sut.findAllUsers();
+        Assert.assertEquals(users, actualResult);
+
+    }
+
+
+    @Test(expected = NullPointerException.class)
+    public void getAllUsersWithNoUsers() {
+        // arrange
+        sut = null;
+        mockUsers.removeAll(mockUsers);
+
+        // act
+        sut.findAllUsers();
+    }
+
+    //tests
+    @Test(expected = InvalidRequestException.class)
+    public void getInvalidUserBad() {
+        sut.findUserById(-1);
+        // there is no user with this ID
+    }
 
     @Test(expected = ResourceNotFoundException.class)
     public void getUserByIdThatDoesNotExist() {
+        Mockito.when(userRepo.findUserById(300)).thenThrow(NoResultException.class);
         sut.findUserById(300); // user with ID 300 does not exist
+    }
+
+    @Test
+    public void getUserByIdTrue(){
+        Mockito.when(userRepo.findUserById(1)).thenReturn(Optional.of(testUser2));
+        Assert.assertEquals(testUser2, sut.findUserById(1));
     }
 
     @Test(expected = ResourceNotFoundException.class)
     public void getByUsernameDoesNotExist() {
+        Mockito.when(userRepo.findUserByUsername("garbage")).thenThrow(NoResultException.class);
         sut.findUserByUsername("garbage");
     }
 
     @Test
     public void getByUsername() {
-        assertEquals("eli", testUser.getUsername());
+        Mockito.when(userRepo.findUserByUsername("eli")).thenReturn(Optional.of(testUser));
+        assertEquals(testUser, sut.findUserByUsername("eli"));
     }
 
     @Test(expected = InvalidRequestException.class)
@@ -128,38 +168,16 @@ public class UserServiceTest {
 
     @Test(expected = ResourceNotFoundException.class)
     public void getByEmailDoesNotExist() {
+        Mockito.when(userRepo.findUserByEmail("garbageMail")).thenThrow(NoResultException.class);
         sut.findUserByEmail("garbageMail");
     }
 
     @Test
     public void getByEmail() {
-        assertEquals("elimaiil", testUser.getEmail());
+        Mockito.when(userRepo.findUserByEmail("elimaiil")).thenReturn(Optional.of(testUser));
+        assertEquals(testUser, sut.findUserByEmail("elimaiil"));
     }
 
-
-    @Test(expected = NullPointerException.class)
-    public void updateUserThatDoesNotExist() throws IOException {
-        // arrange
-        User nullUser = null;
-
-        // act
-        sut.update(nullUser);
-    }
-
-    @Test(expected = InvalidRequestException.class)
-    public void updateUserThatDoesExists() throws IOException {
-        // arrange
-
-
-        // act
-        sut.update(testUser);
-    }
-
-
-    @Test(expected = AuthenticationException.class)
-    public void authenticationWithUnknownCredentials() {
-        sut.authenticate("doesNotExist", "user");
-    }
 
     @Test(expected = InvalidRequestException.class)
     public void registerWithNullUser() {
@@ -167,12 +185,22 @@ public class UserServiceTest {
         sut.register(null);
     }
 
-    @Test(expected = InvalidRequestException.class)
-    public void registerWithSameName() {
-
-        sut.register(testUser);
-        sut.register(testUser3);
+    @Test(expected = ResourceAlreadySavedException.class)
+    public void registerWithSameEmail() {
+        Mockito.when(userRepo.findUserByEmail(testUser2.getEmail())).thenReturn(Optional.of(testUser2));
+        sut.register(testUser2);
     }
+    @Test(expected = ResourceAlreadySavedException.class)
+    public void registerWithSameUsername(){
+        Mockito.when(userRepo.findUserByEmail(testUser2.getEmail())).thenThrow(NoResultException.class);
+        Mockito.when(userRepo.findUserByUsername(testUser2.getUsername())).thenReturn(Optional.of(testUser2));
+        sut.register(testUser2);
+    }
+
+
+
+
+
 
 
     @Test(expected = InvalidRequestException.class)
@@ -186,33 +214,39 @@ public class UserServiceTest {
 
 
 
-    //get all tests
-//    @Test(expected = NullPointerException.class)
-//    public void GetAllUsersBad(){
-//        Mockito.when(mockUserRepo.findUserById(1)).thenThrow(NullPointerException.class);
-//        mockUserRepo.getAllUsers();
-//    }
+
+
 
     @Test
-    public void getAllusers(){
-        Set<User> users = new HashSet<>();
-        users.add(testUser);
-        Mockito.when(mockUserRepo.getAllUsers()).thenReturn(users);
-        Set<User> actualResult = sut.findAllUsers();
-        Assert.assertEquals(users, actualResult);
-
+    public void registerTrue(){
+        Mockito.when(userRepo.findUserByEmail(testUser2.getEmail())).thenThrow(NoResultException.class);
+        Mockito.when(userRepo.findUserByUsername(testUser2.getUsername())).thenThrow(NoResultException.class);
+        sut.register(testUser2);
     }
 
-
-    @Test(expected = NullPointerException.class)
-    public void getAllUsersWithNoUsers() {
-        // arrange
-        sut = null;
-        mockUsers.removeAll(mockUsers);
-
-        // act
-        sut.findAllUsers();
+    @Test(expected = ResourceAlreadySavedException.class)
+    public void updateEmailFail() throws IOException {
+        Mockito.when(userRepo.findUserById(testUser2.getUserId())).thenReturn(Optional.of(testUser2));
+        Mockito.when(userRepo.findUserByEmail(testUser2.getEmail())).thenReturn(Optional.of(testUser3));
+        sut.update(testUser2);
     }
+
+    @Test(expected = ResourceAlreadySavedException.class)
+    public void updateUsernameFail() throws IOException{
+        Mockito.when(userRepo.findUserById(testUser2.getUserId())).thenReturn(Optional.of(testUser2));
+        Mockito.when(userRepo.findUserByEmail(testUser2.getEmail())).thenThrow(NoResultException.class);
+        Mockito.when(userRepo.findUserByUsername(testUser2.getUsername())).thenReturn(Optional.of(testUser3));
+        sut.update(testUser2);
+    }
+
+    @Test
+    public void updateUserTrue() throws IOException{
+        Mockito.when(userRepo.findUserById(testUser2.getUserId())).thenReturn(Optional.of(testUser2));
+        Mockito.when(userRepo.findUserByEmail(testUser2.getEmail())).thenThrow(NoResultException.class);
+        Mockito.when(userRepo.findUserByUsername(testUser2.getUsername())).thenThrow(NoResultException.class);
+        sut.update(testUser2);
+    }
+
 
 
     @Test(expected = InvalidRequestException.class)
@@ -251,7 +285,29 @@ public class UserServiceTest {
 
         Assert.assertFalse("", sut.isUserValid(new User("elipaetow", "", "eli@mail", "password", "User")));
     }
+    @Test(expected = InvalidRequestException.class)
+    public void updatePasswordNullPassword(){
+        sut.updatePassword(testUser2, null);
+    }
 
+    @Test(expected = InvalidRequestException.class)
+    public void updatePasswordEmptyPassword(){
+        sut.updatePassword(testUser2, "");
+    }
+
+    @Test(expected = FailedTransactionException.class)
+    public void updatePasswordFailedTransaction(){
+        Mockito.when(userRepo.findUserById(testUser2.getUserId())).thenReturn(Optional.of(testUser3));
+        sut.updatePassword(testUser2, "5");
+    }
+
+    @Test
+    public void updatePasswordTrue(){
+        User testUser2WithPassword = testUser2;
+        testUser2WithPassword.setPassword("5");
+        Mockito.when(userRepo.findUserById(testUser2.getUserId())).thenReturn(Optional.of(testUser2WithPassword));
+        sut.updatePassword(testUser2, "5");
+    }
 
     //teardown
     @After
