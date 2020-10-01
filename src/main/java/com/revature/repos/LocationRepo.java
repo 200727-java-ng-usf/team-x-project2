@@ -1,6 +1,7 @@
 package com.revature.repos;
 
 
+import com.revature.exceptions.FailedTransactionException;
 import com.revature.models.Location;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -14,7 +15,7 @@ import java.util.Set;
 @Repository
 public class LocationRepo {
 
-    private SessionFactory sessionFactory;
+    private  SessionFactory sessionFactory;
 
     @Autowired
     public LocationRepo(SessionFactory factory) {
@@ -23,10 +24,9 @@ public class LocationRepo {
 
 
 
-
-
-    public static void addNewLocation(Location newLocation) {
-
+    public void addNewLocation(Location newLocation) {
+        Session session = sessionFactory.getCurrentSession();
+        session.save(newLocation);
     }
 
     //find all locations
@@ -39,13 +39,30 @@ public class LocationRepo {
 
 
     //find location by id
-    public Optional<Location> findLocationById(int id) {
+        public Optional<Location> findLocationById ( int id){
+            Session session = sessionFactory.getCurrentSession();
+            Optional<Location> location = Optional.of(session.createQuery("from locations l where l.locationId = :id", Location.class)
+                    .setParameter("id", id)
+                    .getSingleResult());
+
+            return location;
+        }
+
+    public Optional<Location> findLocationByZipCode(String locationZipCode) {
         Session session = sessionFactory.getCurrentSession();
-        Optional<Location> location = Optional.of(session.createQuery("from locations l where l.locationId = :id", Location.class)
-                .setParameter("id", id)
+        Optional<Location> location = Optional.of(session.createQuery("from locations l where l.locationZipCode = :zip", Location.class)
+                .setParameter("zip", locationZipCode)
                 .getSingleResult());
 
         return location;
     }
+
+    //delete location by id
+    public void deleteLocation(Location deleteLocation){
+        Session session = sessionFactory.getCurrentSession();
+        session.delete(deleteLocation);
+
+    }
+
 }
 
