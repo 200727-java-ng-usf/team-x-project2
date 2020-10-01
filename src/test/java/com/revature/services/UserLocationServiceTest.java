@@ -23,11 +23,12 @@ public class UserLocationServiceTest {
     private LocationRepo locationRepo = Mockito.mock(LocationRepo.class);
     private UserLocationRepo userLocationRepo = Mockito.mock(UserLocationRepo.class);
     private User testUser;
+    private Location testLocation;
 
     @Before
     public void setUp(){
         userLocationService = new UserLocationService(locationRepo, userRepo, userLocationRepo);
-        Location testLocation = new Location(1, "TestCity", "TestState", "TestCountry", "00000");
+        testLocation = new Location(1, "TestCity", "TestState", "TestCountry", "00000");
         testUser = new User(1, "Test", "Test", "Test", "Test", "Test@email.com", "00000", UserRole.USER);
         testUser.addLocations(testLocation);
     }
@@ -44,5 +45,37 @@ public class UserLocationServiceTest {
         Set<Location> expectedLocations = testUser.getLocations();
         Set<Location> actualLocations = userLocationService.findAllFavoriteLocations(1);
         Assert.assertEquals(expectedLocations, actualLocations);
+    }
+
+    @Test(expected = GoneException.class)
+    public void addHomeLocationGoneException() {
+        Mockito.when(locationRepo.findLocationByZipCode(testLocation.getLocationZipCode())).thenReturn(Optional.of(testLocation));
+        Mockito.when(userRepo.findUserById(1)).thenThrow(NoResultException.class);
+        userLocationService.addHomeLocation(testLocation, 1);
+    }
+
+    @Test
+    public void addHomeLocationTrue() {
+        Mockito.when(locationRepo.findLocationByZipCode(testLocation.getLocationZipCode())).thenReturn(Optional.of(testLocation));
+        Mockito.when(userRepo.findUserById(1)).thenReturn(Optional.of(testUser));
+        User actualUser = userLocationService.addHomeLocation(testLocation, 1);
+        testUser.setHome(testLocation);
+        Assert.assertEquals(testUser, actualUser);
+    }
+
+    @Test(expected = GoneException.class)
+    public void addFavoriteLocationGoneException() {
+        Mockito.when(locationRepo.findLocationByZipCode(testLocation.getLocationZipCode())).thenReturn(Optional.of(testLocation));
+        Mockito.when(userRepo.findUserById(1)).thenThrow(NoResultException.class);
+        userLocationService.addFavoriteLocation(testLocation, 1);
+    }
+
+    @Test
+    public void addFavoriteLocationTrue() {
+        Mockito.when(locationRepo.findLocationByZipCode(testLocation.getLocationZipCode())).thenReturn(Optional.of(testLocation));
+        Mockito.when(userRepo.findUserById(1)).thenReturn(Optional.of(testUser));
+        User actualUser = userLocationService.addFavoriteLocation(testLocation, 1);
+        testUser.addLocations(testLocation);
+        Assert.assertEquals(testUser, actualUser);
     }
 }
