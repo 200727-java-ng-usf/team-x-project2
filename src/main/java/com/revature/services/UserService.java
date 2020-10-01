@@ -248,6 +248,9 @@ public class UserService {
 
     @Transactional
     public void updatePassword(User user, String password) {
+        if (password == null || password.trim().equals("")){
+            throw new InvalidRequestException("Password can not be null or empty");
+        }
         user.setPassword(password);
         userRepo.updateUser(user);
         User testUser = findUserById(user.getUserId());
