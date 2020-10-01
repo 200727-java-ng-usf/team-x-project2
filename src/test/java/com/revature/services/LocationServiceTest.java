@@ -1,5 +1,6 @@
 package com.revature.services;
 
+import com.revature.exceptions.FailedTransactionException;
 import com.revature.exceptions.InvalidRequestException;
 import com.revature.exceptions.ResourceAlreadySavedException;
 import com.revature.exceptions.ResourceNotFoundException;
@@ -41,19 +42,28 @@ public class LocationServiceTest {
 
     //tests
     //idtests
-    //why though
     @Test(expected = InvalidRequestException.class)
     public void getInvalidUserBad() {
         sut.findLocationById(0); // there is no user with this ID
     }
 
+    @Test
+    public void findLocationIdTrue(){
+        Mockito.when(locationRepo.findLocationById(testLocation1.getLocationId())).thenReturn(Optional.of(testLocation1));
+        Assert.assertEquals(testLocation1, sut.findLocationById(testLocation1.getLocationId()));
+    }
 
     @Test
     public void getByID(){
         assertEquals(2, testLocation1.getLocationId());
     }
 
-    //need to sut.findbyid
+    @Test(expected = ResourceNotFoundException.class)
+    public void getLocationByIdThatDoesNotExist() {
+        Mockito.when(locationRepo.findLocationById(200)).thenThrow(NoResultException.class);
+        sut.findLocationById(200); // user with ID 300 does not exist
+    }
+
 
     //get all
     @Test(expected = NullPointerException.class)
@@ -64,6 +74,16 @@ public class LocationServiceTest {
 
         // act
         sut.findAllLocatins();
+    }
+
+    @Test
+    public void getAllLocations(){
+        Set<Location> locations = new HashSet<>();
+        locations.add(testLocation);
+        Mockito.when(locationRepo.getAllLocations()).thenReturn(locations);
+        Set<Location> actualResult = sut.findAllLocatins();
+        Assert.assertEquals(locations, actualResult);
+
     }
 
 
@@ -110,6 +130,18 @@ public class LocationServiceTest {
 
         sut.delete(testLocation);
     }
+
+    @Test
+    public void deleteLocation(){
+        Mockito.when(locationRepo.findLocationById(testLocation1.getLocationId())).thenReturn(Optional.of(testLocation1));
+        sut.delete(testLocation1);
+    }
+
+
+
+
+
+
 
     //teardown
     @After
