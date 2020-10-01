@@ -26,6 +26,7 @@ public class LocationServiceTest {
     Set<Location> mockLocations = new HashSet<>();
 
     private Location testLocation1;
+    private Location testLocation;
 
 
     //setup
@@ -52,6 +53,22 @@ public class LocationServiceTest {
         assertEquals(2, testLocation1.getLocationId());
     }
 
+    //need to sut.findbyid
+
+    //get all
+    @Test(expected = NullPointerException.class)
+    public void getAllLocationsWithNoLocations() {
+        // arrange
+        sut = null;
+        mockLocations.removeAll(mockLocations);
+
+        // act
+        sut.findAllLocatins();
+    }
+
+
+
+
     @Test(expected = ResourceAlreadySavedException.class)
     public void addNewLocationException(){
         Mockito.when(locationRepo.findLocationByZipCode(testLocation1.getLocationZipCode())).thenReturn(Optional.of(testLocation1));
@@ -75,6 +92,23 @@ public class LocationServiceTest {
     public void findLocationByZipCodeTrue(){
         Mockito.when(locationRepo.findLocationByZipCode(testLocation1.getLocationZipCode())).thenReturn(Optional.of(testLocation1));
         Assert.assertEquals(testLocation1, sut.findLocationByZipCode(testLocation1.getLocationZipCode()));
+    }
+
+
+    //delete tests
+//delete
+
+    @Test(expected = NullPointerException.class)
+    public void deleteTestNull(){
+        sut.delete(null);
+    }
+
+    @Test(expected = InvalidRequestException.class)
+    public void deleteTestEmpty(){
+
+        testLocation = new Location("" , "" , "", "");
+
+        sut.delete(testLocation);
     }
 
     //teardown
