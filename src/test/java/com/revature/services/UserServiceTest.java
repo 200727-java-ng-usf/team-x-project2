@@ -40,6 +40,8 @@ public class UserServiceTest {
     private User testUser2;
     private User testUser3;
     private User testUser4;
+    private User testUser5;
+    private User testUser6;
 
 
     //setup
@@ -180,8 +182,11 @@ public class UserServiceTest {
 //    @Test(expected = ResourceAlreadySavedException.class)
 //    public void registerWithSameUserName() {
 //
-//        sut.register(testUser);
-//        sut.register(testUser3);
+//        testUser5 = new User(5,"eli7", "password","eli" ,"paetow", "eli@mail" ,"12345", UserRole.USER);
+//        testUser6 = new User(6, "eli", "password","eli" ,"paetow", "eli3@mail" ,"12345", UserRole.ADMIN);
+//
+//        sut.register(testUser5);
+//        sut.register(testUser6);
 //    }
 //
 //    @Test(expected = ResourceAlreadySavedException.class)
