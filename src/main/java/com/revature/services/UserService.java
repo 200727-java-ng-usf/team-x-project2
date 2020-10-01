@@ -78,7 +78,7 @@ public class UserService {
         try {
             User user = userRepo.findUserById(id).orElseThrow(ResourceNotFoundException::new);
             return user;
-        } catch (Exception e) {
+        } catch (ResourceNotFoundException e) {
             throw new ResourceNotFoundException();
         }
 
