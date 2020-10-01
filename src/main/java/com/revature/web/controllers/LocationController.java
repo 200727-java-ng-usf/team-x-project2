@@ -33,18 +33,20 @@ public class LocationController {
         this.locationService = locationService;
     }
 
+    @Secured(allowedRoles = {"Admin", "User"})
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public Location addNewLocation(@RequestBody Location newLocation){
         locationService.addNewLocation(newLocation);
         return locationService.findLocationByZipCode(newLocation.getLocationZipCode());
     }
 
+    @Secured(allowedRoles = {"Admin", "User"})
     @GetMapping(value="/zip")
     public Location getLocationByZipCode(@RequestParam String zip){
         return locationService.findLocationByZipCode(zip);
     }
 
-
+    @Secured(allowedRoles = {"Admin"})
     @GetMapping(produces= MediaType.APPLICATION_JSON_VALUE)
     public Set<Location> getAllLocations()
     {
@@ -60,6 +62,7 @@ public class LocationController {
         return location;
     }
 
+    @Secured(allowedRoles = {"Admin"})
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping
     public void deleteLocation(@RequestParam int id){

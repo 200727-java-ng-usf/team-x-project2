@@ -78,8 +78,8 @@ public class UserService {
         try {
             User user = userRepo.findUserById(id).orElseThrow(ResourceNotFoundException::new);
             return user;
-        } catch (ResourceNotFoundException e) {
-            throw new ResourceNotFoundException();
+        } catch (NoResultException e) {
+            throw new ResourceNotFoundException("No User found with requested Id");
         }
 
     }
@@ -95,7 +95,7 @@ public class UserService {
 
         try {
             return userRepo.findUserByUsername(username).orElseThrow(ResourceNotFoundException::new);
-        } catch (ResourceNotFoundException e) {
+        } catch (NoResultException e) {
             throw new ResourceNotFoundException();
         }
 
@@ -112,7 +112,7 @@ public class UserService {
 
         try {
             return userRepo.findUserByEmail(email).orElseThrow(ResourceNotFoundException::new);
-        } catch (Exception e){
+        } catch (NoResultException e){
             throw new ResourceNotFoundException();
         }
     }

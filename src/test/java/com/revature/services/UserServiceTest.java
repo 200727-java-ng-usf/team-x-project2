@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class UserServiceTest {
@@ -37,7 +38,7 @@ public class UserServiceTest {
     //isuservalid
 
     private UserService sut;
-    private UserRepo mockUserRepo = Mockito.mock(UserRepo.class);
+    private UserRepo userRepo = Mockito.mock(UserRepo.class);
     Set<User> mockUsers = new HashSet<>();
     private User testUser;
     private User testUser2;
@@ -47,7 +48,7 @@ public class UserServiceTest {
     //setup
     @Before
     public void setup() {
-        sut = new UserService(mockUserRepo);
+        sut = new UserService(userRepo);
         mockUsers.add(new User("Adam", "Inn", "admin", "secret", "admin@app.com", "Admin"));
         mockUsers.add(new User("Manny", "Gerr", "manager", "manage", "manager@app.com", "User"));
         mockUsers.add(new User("Alice", "Anderson", "aanderson", "password", "admin@app.com", "User"));
@@ -65,18 +66,8 @@ public class UserServiceTest {
     @Test(expected = InvalidRequestException.class)
     public void getInvalidUserBad() {
         sut.findUserById(-1);
-
-
         // there is no user with this ID
     }
-
-
-    @Test
-    public void getByID() {
-        assertEquals(1, testUser2.getUserId());
-    }
-
-
 
 
     @Test(expected = InvalidRequestException.class)
@@ -93,17 +84,26 @@ public class UserServiceTest {
 
     @Test(expected = ResourceNotFoundException.class)
     public void getUserByIdThatDoesNotExist() {
+        Mockito.when(userRepo.findUserById(300)).thenThrow(NoResultException.class);
         sut.findUserById(300); // user with ID 300 does not exist
+    }
+
+    @Test
+    public void getUserByIdTrue(){
+        Mockito.when(userRepo.findUserById(1)).thenReturn(Optional.of(testUser2));
+        Assert.assertEquals(testUser2, sut.findUserById(1));
     }
 
     @Test(expected = ResourceNotFoundException.class)
     public void getByUsernameDoesNotExist() {
+        Mockito.when(userRepo.findUserByUsername("garbage")).thenThrow(NoResultException.class);
         sut.findUserByUsername("garbage");
     }
 
     @Test
     public void getByUsername() {
-        assertEquals("eli", testUser.getUsername());
+        Mockito.when(userRepo.findUserByUsername("eli")).thenReturn(Optional.of(testUser));
+        assertEquals(testUser, sut.findUserByUsername("eli"));
     }
 
     @Test(expected = InvalidRequestException.class)
@@ -128,19 +128,15 @@ public class UserServiceTest {
 
     @Test(expected = ResourceNotFoundException.class)
     public void getByEmailDoesNotExist() {
+        Mockito.when(userRepo.findUserByEmail("garbageMail")).thenThrow(NoResultException.class);
         sut.findUserByEmail("garbageMail");
     }
 
     @Test
     public void getByEmail() {
-        assertEquals("elimaiil", testUser.getEmail());
+        Mockito.when(userRepo.findUserByEmail("elimaiil")).thenReturn(Optional.of(testUser));
+        assertEquals(testUser, sut.findUserByEmail("elimaiil"));
     }
-
-
-
-
-
-
 //    @Test(expected = NullPointerException.class)
 //    public void updateUserThatDoesNotExist() throws IOException {
 //        // arrange
@@ -203,7 +199,7 @@ public class UserServiceTest {
     public void getAllusers(){
         Set<User> users = new HashSet<>();
         users.add(testUser);
-        Mockito.when(mockUserRepo.getAllUsers()).thenReturn(users);
+        Mockito.when(userRepo.getAllUsers()).thenReturn(users);
         Set<User> actualResult = sut.findAllUsers();
         Assert.assertEquals(users, actualResult);
 

@@ -4,6 +4,7 @@ import com.revature.dtos.Principal;
 import com.revature.models.Location;
 import com.revature.models.User;
 import com.revature.services.UserLocationService;
+import com.revature.web.security.Secured;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -22,18 +23,21 @@ public class UserLocationController {
         this.userLocationService = userLocationService;
     }
 
+    @Secured(allowedRoles = {"Admin", "User"})
     @GetMapping(value="/favorites", produces = MediaType.APPLICATION_JSON_VALUE)
     public Set<Location> getAllFavoriteLocations(HttpServletRequest request){
         Principal principal = (Principal) request.getSession().getAttribute("principal");
         return userLocationService.findAllFavoriteLocations(principal.getUserId());
     }
 
+    @Secured(allowedRoles = {"Admin", "User"})
     @PutMapping(value="/home", produces = MediaType.APPLICATION_JSON_VALUE)
     public User addHomeLocationToUser(@RequestBody Location home, HttpServletRequest request){
         Principal principal = (Principal) request.getSession().getAttribute("principal");
         return userLocationService.addHomeLocation(home, principal.getUserId());
     }
 
+    @Secured(allowedRoles = {"Admin", "User"})
     @PutMapping(value="/favorites", produces = MediaType.APPLICATION_JSON_VALUE)
     public User addFavoriteLocationToUser(@RequestBody Location favorite, HttpServletRequest request){
         Principal principal = (Principal) request.getSession().getAttribute("principal");
