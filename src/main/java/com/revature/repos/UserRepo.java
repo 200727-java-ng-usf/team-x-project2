@@ -71,7 +71,7 @@ public class UserRepo {
 
     public void updateUser(User updatedUser){
         Session session = sessionFactory.getCurrentSession();
-        session.update(updatedUser);
+        session.merge(updatedUser);
 
     }
 

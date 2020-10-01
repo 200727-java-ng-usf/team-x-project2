@@ -78,7 +78,7 @@ public class UserService {
         try {
             User user = userRepo.findUserById(id).orElseThrow(ResourceNotFoundException::new);
             return user;
-        } catch (Exception e) {
+        } catch (ResourceNotFoundException e) {
             throw new ResourceNotFoundException();
         }
 
@@ -151,10 +151,56 @@ public class UserService {
 
     @Transactional
     public void update (User updatedUser) throws IOException {
+        User user = userRepo.findUserById(updatedUser.getUserId()).get();
+        try {
+            Optional<User> testUser = userRepo.findUserByEmail(updatedUser.getEmail());
+            if (testUser.isPresent()) {
+                if (!testUser.get().equals(user)) {
+                    throw new ResourceAlreadySavedException("That email is taken!");
+                }
+            }
+        } catch (NoResultException nre) {
+        }
+        try {
+            Optional<User> existingUser = userRepo.findUserByUsername(updatedUser.getUsername());
+            if (existingUser.isPresent()) {
+                if (!existingUser.get().equals(user)) {
+                    throw new ResourceAlreadySavedException("Provided username is already in use!");
+                }
+            }
+        } catch (NoResultException e) {
+        }
+        if (updatedUser.getUserRole() == null || updatedUser.getUserRole().equals("")){
+            updatedUser.setUserRole(user.getUserRole());
+        }
+        if (updatedUser.getLocations() == null){
+            updatedUser.setLocations(user.getLocations());
+        }
+        if (updatedUser.getHome() == null){
+            updatedUser.setHome(user.getHome());
+        }
+        if (updatedUser.getPassword() == null || updatedUser.getPassword().trim().equals("")){
+            updatedUser.setPassword(user.getPassword());
+        }
+        if (updatedUser.getFirstName() == null || updatedUser.getFirstName().trim().equals("")){
+            updatedUser.setFirstName(user.getFirstName());
+        }
+        if (updatedUser.getLastName() == null || updatedUser.getLastName().trim().equals("")){
+            updatedUser.setLastName(user.getLastName());
+        }
+        if (updatedUser.getEmail() == null || updatedUser.getEmail().trim().equals("")){
+            updatedUser.setEmail(user.getEmail());
+        }
+        if (updatedUser.getZipCode() == null || updatedUser.getZipCode().trim().equals("")){
+            updatedUser.setZipCode(user.getZipCode());
+        }
+        if (updatedUser.getUsername() == null || updatedUser.getUsername().trim().equals("")){
+            updatedUser.setUsername(user.getUsername());
+        }
         userRepo.updateUser(updatedUser);
         User testUser = findUserById(updatedUser.getUserId());
-        if (!testUser.equals(updatedUser)){
-            throw new InvalidRequestException("User did not update");
+        if (!testUser.equals(updatedUser)) {
+            throw new FailedTransactionException("User did not update");
         }
     }
 
@@ -200,7 +246,15 @@ public class UserService {
         return true;
     }
 
-
+    @Transactional
+    public void updatePassword(User user, String password) {
+        user.setPassword(password);
+        userRepo.updateUser(user);
+        User testUser = findUserById(user.getUserId());
+        if (!testUser.equals(user)){
+            throw new FailedTransactionException("User did not update");
+        }
+    }
 }
 
 

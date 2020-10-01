@@ -1,13 +1,16 @@
 package com.revature.repos;
 
 
+import com.revature.exceptions.FailedTransactionException;
 import com.revature.models.Location;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public class LocationRepo {
@@ -20,11 +23,19 @@ public class LocationRepo {
     }
 
 
+
     public void addNewLocation(Location newLocation) {
         Session session = sessionFactory.getCurrentSession();
         session.save(newLocation);
     }
 
+    //find all locations
+    public Set<Location> getAllLocations() {
+        Session session = sessionFactory.getCurrentSession();
+        Set<Location> locations = new HashSet<>(session.createQuery("from locations", Location.class).list());
+        return locations;
+
+    }
 
 
     //find location by id
@@ -43,4 +54,13 @@ public class LocationRepo {
                 .setParameter("zip", locationZipCode)
                 .getSingleResult());
     }
+
+    //delete location by id
+    public void deleteLocation(Location deleteLocation){
+        Session session = sessionFactory.getCurrentSession();
+        session.delete(deleteLocation);
+
+    }
+
 }
+
