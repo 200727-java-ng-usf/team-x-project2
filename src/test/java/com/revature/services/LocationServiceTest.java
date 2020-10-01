@@ -47,6 +47,11 @@ public class LocationServiceTest {
         sut.findLocationById(0); // there is no user with this ID
     }
 
+    @Test
+    public void findLocationIdTrue(){
+        Mockito.when(locationRepo.findLocationById(testLocation1.getLocationId())).thenReturn(Optional.of(testLocation1));
+        Assert.assertEquals(testLocation1, sut.findLocationById(testLocation1.getLocationId()));
+    }
 
     @Test
     public void getByID(){
@@ -64,6 +69,16 @@ public class LocationServiceTest {
 
         // act
         sut.findAllLocatins();
+    }
+
+    @Test
+    public void getAllLocations(){
+        Set<Location> locations = new HashSet<>();
+        locations.add(testLocation);
+        Mockito.when(locationRepo.getAllLocations()).thenReturn(locations);
+        Set<Location> actualResult = sut.findAllLocatins();
+        Assert.assertEquals(locations, actualResult);
+
     }
 
 

@@ -1,9 +1,6 @@
 package com.revature.services;
 
-import com.revature.exceptions.AuthenticationException;
-import com.revature.exceptions.FailedTransactionException;
-import com.revature.exceptions.InvalidRequestException;
-import com.revature.exceptions.ResourceNotFoundException;
+import com.revature.exceptions.*;
 import com.revature.models.User;
 import com.revature.models.UserRole;
 import com.revature.repos.UserRepo;
@@ -42,6 +39,7 @@ public class UserServiceTest {
     private User testUser;
     private User testUser2;
     private User testUser3;
+    private User testUser4;
 
 
     //setup
@@ -58,6 +56,10 @@ public class UserServiceTest {
         testUser2 = new User(1, "test", "password", "test", "test", "test", "1234", UserRole.ADMIN);
 
         testUser3 = new User("eli", "password", "eli@mail");
+
+        testUser4 = new User("james", "password", "eli@mail"  );
+
+
 
     }
 
@@ -175,6 +177,24 @@ public class UserServiceTest {
     }
 
 
+//    @Test(expected = ResourceAlreadySavedException.class)
+//    public void registerWithSameUserName() {
+//
+//        sut.register(testUser);
+//        sut.register(testUser3);
+//    }
+//
+//    @Test(expected = ResourceAlreadySavedException.class)
+//    public void registerWithSameEmail() {
+//
+//        sut.register(testUser3);
+//        sut.register(testUser4);
+//    }
+
+
+
+
+
     @Test(expected = InvalidRequestException.class)
     public void registerWithEmptyUser() {
 
@@ -182,6 +202,7 @@ public class UserServiceTest {
 
         sut.register(testUser);
     }
+
 
 
 
