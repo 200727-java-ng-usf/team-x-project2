@@ -1,9 +1,6 @@
 package com.revature.services;
 
-import com.revature.exceptions.AuthenticationException;
-import com.revature.exceptions.FailedTransactionException;
-import com.revature.exceptions.InvalidRequestException;
-import com.revature.exceptions.ResourceNotFoundException;
+import com.revature.exceptions.*;
 import com.revature.models.User;
 import com.revature.models.UserRole;
 import com.revature.repos.UserRepo;
@@ -49,10 +46,12 @@ public class UserService {
             throw new InvalidRequestException("Invalid credential values provided!");
         }
 
-
-        return userRepo.findUserByCredentials(username, password)
-                .orElseThrow(AuthenticationException::new);
-
+        try {
+            return userRepo.findUserByCredentials(username, password)
+                    .orElseThrow(AuthenticationException::new);
+        } catch (NoResultException nre){
+            throw new AuthenticationException("The Credentials provided does not match any Username/Password combination on record!");
+        }
     }
 
     //find all
@@ -62,8 +61,8 @@ public class UserService {
         try {
             users = new HashSet<>(userRepo.getAllUsers());
 
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (NullPointerException e) {
+            throw new NullPointerException();
         }
         return users;
     }
@@ -79,8 +78,8 @@ public class UserService {
         try {
             User user = userRepo.findUserById(id).orElseThrow(ResourceNotFoundException::new);
             return user;
-        } catch (Exception e) {
-            throw new ResourceNotFoundException();
+        } catch (NoResultException e) {
+            throw new ResourceNotFoundException("No User found with requested Id");
         }
 
     }
@@ -96,8 +95,8 @@ public class UserService {
 
         try {
             return userRepo.findUserByUsername(username).orElseThrow(ResourceNotFoundException::new);
-        } catch (Exception e) {
-            throw new RuntimeException();
+        } catch (NoResultException e) {
+            throw new ResourceNotFoundException();
         }
 
     }
@@ -113,8 +112,8 @@ public class UserService {
 
         try {
             return userRepo.findUserByEmail(email).orElseThrow(ResourceNotFoundException::new);
-        } catch (Exception e){
-            throw new RuntimeException();
+        } catch (NoResultException e){
+            throw new ResourceNotFoundException();
         }
     }
 
@@ -127,16 +126,23 @@ public class UserService {
         if (!isUserValid(newUser)) {
             throw new InvalidRequestException("Invalid user field values provided during registration!");
         }
-
         try {
-            Optional<User> existingUser = userRepo.findUserByUsername(newUser.getUsername());
-            if (existingUser.isPresent()) {
-                throw new RuntimeException("Provided username is already in use!");
+            Optional<User> testUser = userRepo.findUserByEmail(newUser.getEmail());
+            if (testUser.isPresent()){
+                throw new ResourceAlreadySavedException("That email is taken!");
             }
-        } catch (NoResultException e){
-            newUser.setUserRole(UserRole.USER);
-            userRepo.register(newUser);
+        } catch (NoResultException nre){
+            try {
+                Optional<User> existingUser = userRepo.findUserByUsername(newUser.getUsername());
+                if (existingUser.isPresent()) {
+                    throw new ResourceAlreadySavedException("Provided username is already in use!");
+                }
+            } catch (NoResultException e){
+                newUser.setUserRole(UserRole.USER);
+                userRepo.register(newUser);
+            }
         }
+
     }
 
     //update user
@@ -145,10 +151,56 @@ public class UserService {
 
     @Transactional
     public void update (User updatedUser) throws IOException {
+        User user = userRepo.findUserById(updatedUser.getUserId()).get();
+        try {
+            Optional<User> testUser = userRepo.findUserByEmail(updatedUser.getEmail());
+            if (testUser.isPresent()) {
+                if (!testUser.get().equals(user)) {
+                    throw new ResourceAlreadySavedException("That email is taken!");
+                }
+            }
+        } catch (NoResultException nre) {
+        }
+        try {
+            Optional<User> existingUser = userRepo.findUserByUsername(updatedUser.getUsername());
+            if (existingUser.isPresent()) {
+                if (!existingUser.get().equals(user)) {
+                    throw new ResourceAlreadySavedException("Provided username is already in use!");
+                }
+            }
+        } catch (NoResultException e) {
+        }
+        if (updatedUser.getUserRole() == null || updatedUser.getUserRole().equals("")){
+            updatedUser.setUserRole(user.getUserRole());
+        }
+        if (updatedUser.getLocations() == null){
+            updatedUser.setLocations(user.getLocations());
+        }
+        if (updatedUser.getHome() == null){
+            updatedUser.setHome(user.getHome());
+        }
+        if (updatedUser.getPassword() == null || updatedUser.getPassword().trim().equals("")){
+            updatedUser.setPassword(user.getPassword());
+        }
+        if (updatedUser.getFirstName() == null || updatedUser.getFirstName().trim().equals("")){
+            updatedUser.setFirstName(user.getFirstName());
+        }
+        if (updatedUser.getLastName() == null || updatedUser.getLastName().trim().equals("")){
+            updatedUser.setLastName(user.getLastName());
+        }
+        if (updatedUser.getEmail() == null || updatedUser.getEmail().trim().equals("")){
+            updatedUser.setEmail(user.getEmail());
+        }
+        if (updatedUser.getZipCode() == null || updatedUser.getZipCode().trim().equals("")){
+            updatedUser.setZipCode(user.getZipCode());
+        }
+        if (updatedUser.getUsername() == null || updatedUser.getUsername().trim().equals("")){
+            updatedUser.setUsername(user.getUsername());
+        }
         userRepo.updateUser(updatedUser);
         User testUser = findUserById(updatedUser.getUserId());
-        if (!testUser.equals(updatedUser)){
-            throw new RuntimeException("User did not update");
+        if (!testUser.equals(updatedUser)) {
+            throw new FailedTransactionException("User did not update");
         }
     }
 
@@ -194,7 +246,18 @@ public class UserService {
         return true;
     }
 
-
+    @Transactional
+    public void updatePassword(User user, String password) {
+        if (password == null || password.trim().equals("")){
+            throw new InvalidRequestException("Password can not be null or empty");
+        }
+        user.setPassword(password);
+        userRepo.updateUser(user);
+        User testUser = findUserById(user.getUserId());
+        if (!testUser.equals(user)){
+            throw new FailedTransactionException("User did not update");
+        }
+    }
 }
 
 
