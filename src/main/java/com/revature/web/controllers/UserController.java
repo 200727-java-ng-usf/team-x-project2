@@ -71,8 +71,7 @@ public class UserController {
     //@Secured(allowedRoles = {"Admin", "User"})
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(value="/password", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public User updateUserPassword(@RequestParam String password, HttpServletRequest request) throws IOException {
-        Principal principal = (Principal) request.getSession().getAttribute("principal");
+    public User updateUserPassword(@RequestParam String password, @RequestBody Principal principal) throws IOException {
         User user = userService.findUserById(principal.getUserId());
         userService.updatePassword(user, password);
         return userService.findUserById(principal.getUserId());
