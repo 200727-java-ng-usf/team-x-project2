@@ -33,7 +33,7 @@ public class LocationController {
         this.locationService = locationService;
     }
 
-    @Secured(allowedRoles = {"Admin", "User"})
+    //@Secured(allowedRoles = {"Admin", "User"})
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin
     public Location addNewLocation(@RequestBody Location newLocation){
@@ -41,14 +41,14 @@ public class LocationController {
         return locationService.findLocationByZipCode(newLocation.getLocationZipCode());
     }
 
-    @Secured(allowedRoles = {"Admin", "User"})
+    //@Secured(allowedRoles = {"Admin", "User"})
     @GetMapping(value="/zip")
     @CrossOrigin
     public Location getLocationByZipCode(@RequestParam String zip){
         return locationService.findLocationByZipCode(zip);
     }
 
-    @Secured(allowedRoles = {"Admin"})
+   // @Secured(allowedRoles = {"Admin"})
     @GetMapping(produces= MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin
     public Set<Location> getAllLocations()
@@ -58,7 +58,7 @@ public class LocationController {
         return locations;
     }
 
-    @Secured(allowedRoles = {"Admin", "User"})
+    //@Secured(allowedRoles = {"Admin", "User"})
     @GetMapping(value="/id/{id}")
     @CrossOrigin
     public Location getLocationById(@PathVariable int id){
@@ -66,7 +66,7 @@ public class LocationController {
         return location;
     }
 
-    @Secured(allowedRoles = {"Admin"})
+   // @Secured(allowedRoles = {"Admin"})
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping
     @CrossOrigin

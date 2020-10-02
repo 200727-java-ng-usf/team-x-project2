@@ -23,7 +23,7 @@ public class UserLocationController {
         this.userLocationService = userLocationService;
     }
 
-    @Secured(allowedRoles = {"Admin", "User"})
+   // @Secured(allowedRoles = {"Admin", "User"})
     @GetMapping(value="/favorites", produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin
     public Set<Location> getAllFavoriteLocations(HttpServletRequest request){
@@ -31,7 +31,7 @@ public class UserLocationController {
         return userLocationService.findAllFavoriteLocations(principal.getUserId());
     }
 
-    @Secured(allowedRoles = {"Admin", "User"})
+   // @Secured(allowedRoles = {"Admin", "User"})
     @PutMapping(value="/home", produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin
     public User addHomeLocationToUser(@RequestBody Location home, HttpServletRequest request){
@@ -39,7 +39,7 @@ public class UserLocationController {
         return userLocationService.addHomeLocation(home, principal.getUserId());
     }
 
-    @Secured(allowedRoles = {"Admin", "User"})
+   // @Secured(allowedRoles = {"Admin", "User"})
     @PutMapping(value="/favorites", produces = MediaType.APPLICATION_JSON_VALUE)
     @CrossOrigin
     public User addFavoriteLocationToUser(@RequestBody Location favorite, HttpServletRequest request){
