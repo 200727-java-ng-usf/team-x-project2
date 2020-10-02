@@ -35,6 +35,7 @@ public class LocationController {
 
     @Secured(allowedRoles = {"Admin", "User"})
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin
     public Location addNewLocation(@RequestBody Location newLocation){
         locationService.addNewLocation(newLocation);
         return locationService.findLocationByZipCode(newLocation.getLocationZipCode());
@@ -42,12 +43,14 @@ public class LocationController {
 
     @Secured(allowedRoles = {"Admin", "User"})
     @GetMapping(value="/zip")
+    @CrossOrigin
     public Location getLocationByZipCode(@RequestParam String zip){
         return locationService.findLocationByZipCode(zip);
     }
 
     @Secured(allowedRoles = {"Admin"})
     @GetMapping(produces= MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin
     public Set<Location> getAllLocations()
     {
 
@@ -57,6 +60,7 @@ public class LocationController {
 
     @Secured(allowedRoles = {"Admin", "User"})
     @GetMapping(value="/id/{id}")
+    @CrossOrigin
     public Location getLocationById(@PathVariable int id){
         Location location = locationService.findLocationById(id);
         return location;
@@ -65,6 +69,7 @@ public class LocationController {
     @Secured(allowedRoles = {"Admin"})
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping
+    @CrossOrigin
     public void deleteLocation(@RequestParam int id){
         Location locationToBeDeleted = locationService.findLocationById(id);
         locationService.delete(locationToBeDeleted);

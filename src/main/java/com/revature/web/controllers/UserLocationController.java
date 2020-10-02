@@ -25,6 +25,7 @@ public class UserLocationController {
 
     @Secured(allowedRoles = {"Admin", "User"})
     @GetMapping(value="/favorites", produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin
     public Set<Location> getAllFavoriteLocations(HttpServletRequest request){
         Principal principal = (Principal) request.getSession().getAttribute("principal");
         return userLocationService.findAllFavoriteLocations(principal.getUserId());
@@ -32,6 +33,7 @@ public class UserLocationController {
 
     @Secured(allowedRoles = {"Admin", "User"})
     @PutMapping(value="/home", produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin
     public User addHomeLocationToUser(@RequestBody Location home, HttpServletRequest request){
         Principal principal = (Principal) request.getSession().getAttribute("principal");
         return userLocationService.addHomeLocation(home, principal.getUserId());
@@ -39,6 +41,7 @@ public class UserLocationController {
 
     @Secured(allowedRoles = {"Admin", "User"})
     @PutMapping(value="/favorites", produces = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin
     public User addFavoriteLocationToUser(@RequestBody Location favorite, HttpServletRequest request){
         Principal principal = (Principal) request.getSession().getAttribute("principal");
         return userLocationService.addFavoriteLocation(favorite, principal.getUserId());
