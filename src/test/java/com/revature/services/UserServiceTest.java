@@ -24,15 +24,7 @@ import static org.mockito.Mockito.when;
 public class UserServiceTest {
 
 
-    //update
-    //register
-    //findall
-    //authenticate
-    //findbyid
 
-    //findbyusername
-    //delete
-    //isuservalid
 
     private UserService sut;
     private UserRepo userRepo = Mockito.mock(UserRepo.class);
@@ -40,6 +32,9 @@ public class UserServiceTest {
     private User testUser;
     private User testUser2;
     private User testUser3;
+    private User testUser4;
+    private User testUser5;
+    private User testUser6;
 
 
     //setup
@@ -56,6 +51,10 @@ public class UserServiceTest {
         testUser2 = new User(1, "test", "password", "test", "test", "test", "1234", UserRole.ADMIN);
 
         testUser3 = new User("eli", "password", "eli@mail");
+
+        testUser4 = new User("james", "password", "eli@mail"  );
+
+
 
     }
 
@@ -198,6 +197,12 @@ public class UserServiceTest {
         sut.register(testUser2);
     }
 
+
+
+
+
+
+
     @Test(expected = InvalidRequestException.class)
     public void registerWithEmptyUser() {
 
@@ -205,6 +210,12 @@ public class UserServiceTest {
 
         sut.register(testUser);
     }
+
+
+
+
+
+
 
     @Test
     public void registerTrue(){

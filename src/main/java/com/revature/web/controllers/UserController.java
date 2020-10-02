@@ -29,6 +29,7 @@ public class UserController {
 
    // @Secured(allowedRoles = {"Admin"})
     @GetMapping(produces=MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin
     public Set<User> getAllUsers()
     {
 
@@ -38,18 +39,21 @@ public class UserController {
 
    // @Secured(allowedRoles = {"Admin", "User"})
     @GetMapping(value="/id/{id}")
+    @CrossOrigin
     public User getUserById(@PathVariable int id){
         User user = userService.findUserById(id);
         return user;
     }
    // @Secured(allowedRoles = {"Admin"})
     @GetMapping(value="/search/username", produces=MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin
     public User getUserByUsername(@RequestParam String username) {
         return userService.findUserByUsername(username);
     }
 
    // @Secured(allowedRoles = {"Admin"})
     @GetMapping(value="/search/email", produces =MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin
     public User getUserByEmail(@RequestParam String email){
         return userService.findUserByEmail(email);
     }
@@ -63,6 +67,7 @@ public class UserController {
     //@Secured(allowedRoles = {"Admin", "User"})
     @ResponseStatus(HttpStatus.OK)
     @PutMapping(produces =MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @CrossOrigin
     public User updateUser(@RequestBody User updatedUser) throws IOException {
         userService.update(updatedUser);
         return userService.findUserByUsername(updatedUser.getUsername());
@@ -70,6 +75,7 @@ public class UserController {
 
     //@Secured(allowedRoles = {"Admin", "User"})
     @ResponseStatus(HttpStatus.OK)
+    @CrossOrigin
     @PutMapping(value="/password", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public User updateUserPassword(@RequestParam String password, @RequestBody Principal principal) throws IOException {
         User user = userService.findUserById(principal.getUserId());
@@ -80,6 +86,7 @@ public class UserController {
     //@Secured(allowedRoles = {"Admin"})
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping
+    @CrossOrigin
     public void deleteUser(@RequestParam int id){
         User userToBeDeleted = userService.findUserById(id);
         userService.delete(userToBeDeleted);
