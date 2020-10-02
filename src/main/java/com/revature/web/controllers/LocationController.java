@@ -33,20 +33,20 @@ public class LocationController {
         this.locationService = locationService;
     }
 
-    @Secured(allowedRoles = {"Admin", "User"})
+    //@Secured(allowedRoles = {"Admin", "User"})
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public Location addNewLocation(@RequestBody Location newLocation){
         locationService.addNewLocation(newLocation);
         return locationService.findLocationByZipCode(newLocation.getLocationZipCode());
     }
 
-    @Secured(allowedRoles = {"Admin", "User"})
+    //@Secured(allowedRoles = {"Admin", "User"})
     @GetMapping(value="/zip")
     public Location getLocationByZipCode(@RequestParam String zip){
         return locationService.findLocationByZipCode(zip);
     }
 
-    @Secured(allowedRoles = {"Admin"})
+   // @Secured(allowedRoles = {"Admin"})
     @GetMapping(produces= MediaType.APPLICATION_JSON_VALUE)
     public Set<Location> getAllLocations()
     {
@@ -55,14 +55,14 @@ public class LocationController {
         return locations;
     }
 
-    @Secured(allowedRoles = {"Admin", "User"})
+    //@Secured(allowedRoles = {"Admin", "User"})
     @GetMapping(value="/id/{id}")
     public Location getLocationById(@PathVariable int id){
         Location location = locationService.findLocationById(id);
         return location;
     }
 
-    @Secured(allowedRoles = {"Admin"})
+   // @Secured(allowedRoles = {"Admin"})
     @ResponseStatus(HttpStatus.OK)
     @DeleteMapping
     public void deleteLocation(@RequestParam int id){
